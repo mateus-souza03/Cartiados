@@ -6,13 +6,14 @@ import RoundResult from '../components/RoundResult';
 import RoundSummary from '../components/RoundSummary';
 import RoundHistory from '../components/RoundHistory';
 import { PHASES } from '../hooks/useGame';
-import { getRoundStarter } from '../utils/gameRules';
+import { getRoundStarter, rotateToStart } from '../utils/gameRules';
 
 export default function Game({ game, actions, theme, onToggleTheme, onViewFinalResult, onNewGame }) {
   const [confirmUndo, setConfirmUndo] = useState(false);
 
   const lastRound = game.history[game.history.length - 1];
   const starter = getRoundStarter(game.players, game.round);
+  const orderedPlayers = rotateToStart(game.players, starter?.id);
 
   const handleUndoClick = () => setConfirmUndo(true);
   const handleUndoConfirm = () => {
@@ -51,7 +52,7 @@ export default function Game({ game, actions, theme, onToggleTheme, onViewFinalR
 
       {game.phase === PHASES.DECLARATION && (
         <RoundDeclaration
-          players={game.players}
+          players={orderedPlayers}
           declarations={game.declarations}
           cardsPerRound={game.cardsPerRound}
           starterId={starter?.id}
@@ -77,7 +78,7 @@ export default function Game({ game, actions, theme, onToggleTheme, onViewFinalR
 
       {game.phase === PHASES.RESULT && (
         <RoundResult
-          players={game.players}
+          players={orderedPlayers}
           declarations={game.declarations}
           results={game.results}
           onUpdate={actions.updateResult}

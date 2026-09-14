@@ -5,13 +5,14 @@ import CachetaRoundInput from '../components/CachetaRoundInput';
 import CachetaRoundSummary from '../components/CachetaRoundSummary';
 import RoundHistory from '../components/RoundHistory';
 import { CACHETA_PHASES } from '../hooks/useGame';
-import { getRoundStarter } from '../utils/gameRules';
+import { getRoundStarter, rotateToStart } from '../utils/gameRules';
 
 export default function CachetaGame({ game, actions, theme, onToggleTheme, onViewFinalResult, onNewGame }) {
   const [confirmUndo, setConfirmUndo] = useState(false);
 
   const lastRound = game.history[game.history.length - 1];
   const starter = getRoundStarter(game.players, game.round);
+  const orderedPlayers = rotateToStart(game.players, starter?.id);
 
   const handleUndoClick = () => setConfirmUndo(true);
   const handleUndoConfirm = () => {
@@ -49,7 +50,7 @@ export default function CachetaGame({ game, actions, theme, onToggleTheme, onVie
 
       {game.phase === CACHETA_PHASES.ROUND && (
         <CachetaRoundInput
-          players={game.players}
+          players={orderedPlayers}
           participation={game.participation}
           winnerId={game.winnerId}
           starterId={starter?.id}

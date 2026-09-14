@@ -68,3 +68,13 @@ export function getRoundStarter(players, round) {
 
   return players[startIndex];
 }
+
+/**
+ * Reordena a lista para começar pelo jogador informado, mantendo a ordem
+ * de mesa a partir dali (dá a volta para os que vêm antes dele).
+ */
+export function rotateToStart(players, startPlayerId) {
+  const index = players.findIndex((p) => p.id === startPlayerId);
+  if (index <= 0) return players;
+  return [...players.slice(index), ...players.slice(0, index)];
+}
