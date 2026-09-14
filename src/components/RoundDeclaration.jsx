@@ -5,6 +5,7 @@ export default function RoundDeclaration({
   players,
   declarations,
   cardsPerRound,
+  starterId,
   onUpdate,
   onUpdateCardsPerRound,
   onConfirm,
@@ -42,7 +43,10 @@ export default function RoundDeclaration({
       <div className="declaration-list">
         {players.map((p) => (
           <div key={p.id} className="declaration-card">
-            <div className="declaration-name">{p.name}</div>
+            <div className="declaration-name">
+              {p.name}
+              {p.id === starterId && <span className="badge starter-badge">🎯 Começa</span>}
+            </div>
             <div className="field">
               <span>Pontos que fará</span>
               <NumberStepper

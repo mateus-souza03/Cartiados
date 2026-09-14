@@ -1,7 +1,15 @@
 import { useState } from 'react';
 import { isForcedToPlay } from '../utils/cachetaScoring';
 
-export default function CachetaRoundInput({ players, participation, winnerId, onToggleParticipation, onSelectWinner, onFinalize }) {
+export default function CachetaRoundInput({
+  players,
+  participation,
+  winnerId,
+  starterId,
+  onToggleParticipation,
+  onSelectWinner,
+  onFinalize,
+}) {
   const [error, setError] = useState('');
 
   const activePlayers = players.filter((p) => p.score > 0);
@@ -30,6 +38,7 @@ export default function CachetaRoundInput({ players, participation, winnerId, on
             <div key={p.id} className="declaration-card">
               <div className="declaration-name">
                 {p.name}
+                {p.id === starterId && <span className="badge starter-badge">🎯 Começa</span>}
                 {forced && <span className="badge badge-muted cacheta-forced-badge">Obrigado a jogar</span>}
               </div>
 

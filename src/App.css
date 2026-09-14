@@ -479,6 +479,15 @@ input[type='number']::-webkit-outer-spin-button {
   vertical-align: middle;
 }
 
+.starter-badge {
+  margin-left: 8px;
+  font-size: 11px;
+  padding: 3px 8px;
+  vertical-align: middle;
+  background: var(--success-bg);
+  color: var(--success);
+}
+
 .cacheta-toggle-group {
   display: flex;
   gap: 8px;

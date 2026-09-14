@@ -5,6 +5,7 @@ export default function GameHeader({
   round,
   cardsPerRound,
   gameType,
+  starterName,
   theme,
   onToggleTheme,
   onUndo,
@@ -30,6 +31,7 @@ export default function GameHeader({
             🃏 {cardsPerRound} {cardsPerRound === 1 ? 'carta' : 'cartas'}
           </span>
         )}
+        {starterName && <span className="badge badge-muted">🎯 Começa: {starterName}</span>}
         {canUndo && (
           <button type="button" className="link-button" onClick={onUndo}>
             Desfazer última rodada

@@ -50,3 +50,21 @@ export function getWinner(game) {
 export function getRankedPlayers(players) {
   return [...players].sort((a, b) => b.score - a.score);
 }
+
+/**
+ * Jogador que começa a rodada, rotacionando em ordem fixa a cada rodada.
+ * Pula jogadores eliminados (pontuação zerada), mantendo a sequência entre
+ * os que ainda estão na partida.
+ */
+export function getRoundStarter(players, round) {
+  if (!players.length) return null;
+  const n = players.length;
+  const startIndex = (round - 1) % n;
+
+  for (let i = 0; i < n; i++) {
+    const candidate = players[(startIndex + i) % n];
+    if (candidate.score > 0) return candidate;
+  }
+
+  return players[startIndex];
+}
