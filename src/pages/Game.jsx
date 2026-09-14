@@ -23,6 +23,7 @@ export default function Game({ game, actions, theme, onToggleTheme, onViewFinalR
       <GameHeader
         round={game.round}
         cardsPerRound={game.cardsPerRound}
+        gameType={game.gameType}
         theme={theme}
         onToggleTheme={onToggleTheme}
         onUndo={handleUndoClick}

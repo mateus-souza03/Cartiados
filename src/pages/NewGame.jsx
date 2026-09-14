@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { END_CONDITIONS, END_CONDITION_LABELS } from '../utils/gameRules';
+import { getGameType } from '../utils/gameTypes';
 import NumberStepper from '../components/NumberStepper';
 
-export default function NewGame({ onCreate, onCancel, canCancel }) {
+export default function NewGame({ gameType, onCreate, onCancel }) {
+  const gameTypeInfo = getGameType(gameType);
   const [playerCount, setPlayerCount] = useState(2);
   const [names, setNames] = useState(['', '']);
   const [initialScore, setInitialScore] = useState(5);
@@ -59,6 +61,7 @@ export default function NewGame({ onCreate, onCancel, canCancel }) {
 
     setError('');
     onCreate({
+      gameType: gameTypeInfo.id,
       players: names.map((n) => n.trim()),
       initialScore: Number(initialScore),
       cardsPerRound: Number(cardsPerRound),
@@ -70,6 +73,9 @@ export default function NewGame({ onCreate, onCancel, canCancel }) {
 
   return (
     <div className="new-game">
+      <p className="game-type-eyebrow">
+        {gameTypeInfo.icon} {gameTypeInfo.name}
+      </p>
       <h1 className="page-title">Nova Partida</h1>
 
       <form onSubmit={handleSubmit} className="form">
@@ -147,11 +153,9 @@ export default function NewGame({ onCreate, onCancel, canCancel }) {
         <button type="submit" className="btn btn-primary btn-block">
           Começar partida
         </button>
-        {canCancel && (
-          <button type="button" className="btn btn-ghost btn-block" onClick={onCancel}>
-            Cancelar
-          </button>
-        )}
+        <button type="button" className="btn btn-ghost btn-block" onClick={onCancel}>
+          Voltar
+        </button>
       </form>
     </div>
   );

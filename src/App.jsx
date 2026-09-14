@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useGame } from './hooks/useGame';
 import { useTheme } from './hooks/useTheme';
 import Home from './pages/Home';
+import SelectGameType from './pages/SelectGameType';
 import NewGame from './pages/NewGame';
 import Game from './pages/Game';
 import GameOver from './pages/GameOver';
@@ -18,6 +19,7 @@ function App() {
   const { game } = gameApi;
   const { theme, toggleTheme } = useTheme();
   const [view, setView] = useState(() => initialView(game));
+  const [selectedGameType, setSelectedGameType] = useState(game?.gameType ?? null);
   const [confirmNewGame, setConfirmNewGame] = useState(false);
 
   const actions = {
@@ -31,16 +33,23 @@ function App() {
     undoLastRound: gameApi.undoLastRound,
   };
 
+  const goToPreviousGameOrHome = () => setView(game ? (game.finished ? 'gameover' : 'game') : 'home');
+
   const handleGoToNewGame = () => {
     if (game && !game.finished) {
       setConfirmNewGame(true);
       return;
     }
-    setView('new');
+    setView('selectGame');
   };
 
   const handleConfirmDiscard = () => {
     setConfirmNewGame(false);
+    setView('selectGame');
+  };
+
+  const handleSelectGameType = (id) => {
+    setSelectedGameType(id);
     setView('new');
   };
 
@@ -51,7 +60,7 @@ function App() {
 
   const handleStartOver = () => {
     gameApi.resetGame();
-    setView('new');
+    setView('selectGame');
   };
 
   if (view === 'new' || confirmNewGame) {
@@ -75,13 +84,17 @@ function App() {
         )}
         {view === 'new' && (
           <NewGame
+            gameType={selectedGameType}
             onCreate={handleCreateGame}
-            onCancel={() => setView(game ? (game.finished ? 'gameover' : 'game') : 'home')}
-            canCancel={Boolean(game)}
+            onCancel={() => setView('selectGame')}
           />
         )}
       </>
     );
+  }
+
+  if (view === 'selectGame') {
+    return <SelectGameType onSelect={handleSelectGameType} onBack={goToPreviousGameOrHome} />;
   }
 
   if (view === 'game' && game) {

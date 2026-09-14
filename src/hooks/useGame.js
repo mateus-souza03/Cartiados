@@ -39,6 +39,7 @@ export function useGame() {
     const newGame = {
       id: makeId(),
       createdAt: Date.now(),
+      gameType: config.gameType,
       players,
       initialScore: config.initialScore,
       cardsPerRound: config.cardsPerRound,

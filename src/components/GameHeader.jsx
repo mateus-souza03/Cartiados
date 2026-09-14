@@ -1,8 +1,10 @@
 import ThemeToggle from './ThemeToggle';
+import { getGameType } from '../utils/gameTypes';
 
 export default function GameHeader({
   round,
   cardsPerRound,
+  gameType,
   theme,
   onToggleTheme,
   onUndo,
@@ -10,12 +12,17 @@ export default function GameHeader({
   onNewGame,
   title,
 }) {
+  const gameTypeInfo = getGameType(gameType);
+
   return (
     <header className="game-header">
       <div className="game-header-top">
         <h1 className="game-title">{title}</h1>
         <ThemeToggle theme={theme} onToggle={onToggleTheme} />
       </div>
+      <p className="game-header-subtitle">
+        {gameTypeInfo.icon} {gameTypeInfo.name}
+      </p>
       <div className="game-header-meta">
         <span className="badge">Rodada {round}</span>
         <span className="badge badge-muted">

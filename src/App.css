@@ -146,6 +146,61 @@
   margin: 8px 0 20px;
 }
 
+.game-type-eyebrow {
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 14px;
+  margin: 8px 0 0;
+}
+
+.game-type-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.game-type-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  touch-action: manipulation;
+}
+
+.game-type-card:active {
+  transform: scale(0.98);
+}
+
+.game-type-icon {
+  font-size: 32px;
+  flex: 0 0 auto;
+}
+
+.game-type-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.game-type-name {
+  font-weight: 800;
+  font-size: 17px;
+  color: var(--text);
+}
+
+.game-type-tagline {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
 .form {
   display: flex;
   flex-direction: column;
@@ -294,6 +349,13 @@ input[type='number']::-webkit-outer-spin-button {
   font-size: 24px;
   font-weight: 800;
   margin: 0;
+}
+
+.game-header-subtitle {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 13px;
+  margin: 4px 0 0;
 }
 
 .game-header-meta {
