@@ -7,6 +7,7 @@ import NewGame from './pages/NewGame';
 import Game from './pages/Game';
 import CachetaGame from './pages/CachetaGame';
 import GameOver from './pages/GameOver';
+import Watermark from './components/Watermark';
 import './App.css';
 
 function initialView(game) {
@@ -55,8 +56,10 @@ function App() {
     setView('selectGame');
   };
 
+  let content;
+
   if (view === 'new' || confirmNewGame) {
-    return (
+    content = (
       <>
         {confirmNewGame && (
           <div className="modal-overlay">
@@ -83,15 +86,11 @@ function App() {
         )}
       </>
     );
-  }
-
-  if (view === 'selectGame') {
-    return <SelectGameType onSelect={handleSelectGameType} onBack={goToPreviousGameOrHome} />;
-  }
-
-  if (view === 'game' && game) {
+  } else if (view === 'selectGame') {
+    content = <SelectGameType onSelect={handleSelectGameType} onBack={goToPreviousGameOrHome} />;
+  } else if (view === 'game' && game) {
     const GamePage = game.gameType === 'cacheta' ? CachetaGame : Game;
-    return (
+    content = (
       <GamePage
         game={game}
         actions={actions}
@@ -101,20 +100,25 @@ function App() {
         onNewGame={handleGoToNewGame}
       />
     );
-  }
-
-  if (view === 'gameover' && game) {
-    return <GameOver game={game} onNewGame={handleStartOver} />;
+  } else if (view === 'gameover' && game) {
+    content = <GameOver game={game} onNewGame={handleStartOver} />;
+  } else {
+    content = (
+      <Home
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        onNewGame={handleGoToNewGame}
+        onContinue={() => setView(game.finished ? 'gameover' : 'game')}
+        hasSavedGame={Boolean(game)}
+      />
+    );
   }
 
   return (
-    <Home
-      theme={theme}
-      onToggleTheme={toggleTheme}
-      onNewGame={handleGoToNewGame}
-      onContinue={() => setView(game.finished ? 'gameover' : 'game')}
-      hasSavedGame={Boolean(game)}
-    />
+    <>
+      {content}
+      <Watermark />
+    </>
   );
 }
 
