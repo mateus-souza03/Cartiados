@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { END_CONDITIONS, END_CONDITION_LABELS } from '../utils/gameRules';
+import NumberStepper from '../components/NumberStepper';
 
 export default function NewGame({ onCreate, onCancel, canCancel }) {
   const [playerCount, setPlayerCount] = useState(2);
   const [names, setNames] = useState(['', '']);
   const [initialScore, setInitialScore] = useState(5);
   const [cardsPerRound, setCardsPerRound] = useState(3);
-  const [endCondition, setEndCondition] = useState(END_CONDITIONS.ZERO_SCORE);
+  const [endCondition, setEndCondition] = useState(END_CONDITIONS.LAST_SURVIVOR);
   const [endConditionValue, setEndConditionValue] = useState(10);
   const [allowNegative, setAllowNegative] = useState(false);
   const [error, setError] = useState('');
@@ -72,28 +73,21 @@ export default function NewGame({ onCreate, onCancel, canCancel }) {
       <h1 className="page-title">Nova Partida</h1>
 
       <form onSubmit={handleSubmit} className="form">
-        <label className="field">
+        <div className="field">
           <span>Pontuação inicial</span>
-          <input
-            type="number"
-            min="0"
-            inputMode="numeric"
-            value={initialScore}
-            onChange={(e) => setInitialScore(e.target.value)}
-          />
-        </label>
+          <NumberStepper label="pontuação inicial" min={0} value={initialScore} onChange={setInitialScore} />
+        </div>
 
-        <label className="field">
+        <div className="field">
           <span>Quantidade de jogadores</span>
-          <input
-            type="number"
-            min="2"
-            max="12"
-            inputMode="numeric"
+          <NumberStepper
+            label="quantidade de jogadores"
+            min={2}
+            max={12}
             value={playerCount}
-            onChange={(e) => handlePlayerCountChange(e.target.value)}
+            onChange={handlePlayerCountChange}
           />
-        </label>
+        </div>
 
         <div className="player-name-list">
           {names.map((name, i) => (
@@ -109,16 +103,10 @@ export default function NewGame({ onCreate, onCancel, canCancel }) {
           ))}
         </div>
 
-        <label className="field">
+        <div className="field">
           <span>Quantidade de cartas por rodada</span>
-          <input
-            type="number"
-            min="1"
-            inputMode="numeric"
-            value={cardsPerRound}
-            onChange={(e) => setCardsPerRound(e.target.value)}
-          />
-        </label>
+          <NumberStepper label="quantidade de cartas por rodada" min={1} value={cardsPerRound} onChange={setCardsPerRound} />
+        </div>
 
         <label className="field">
           <span>Condição de encerramento</span>
@@ -132,18 +120,17 @@ export default function NewGame({ onCreate, onCancel, canCancel }) {
         </label>
 
         {needsEndConditionValue && (
-          <label className="field">
+          <div className="field">
             <span>
               {endCondition === END_CONDITIONS.MAX_ROUNDS ? 'Número de rodadas' : 'Pontuação alvo'}
             </span>
-            <input
-              type="number"
-              min="1"
-              inputMode="numeric"
+            <NumberStepper
+              label={endCondition === END_CONDITIONS.MAX_ROUNDS ? 'número de rodadas' : 'pontuação alvo'}
+              min={1}
               value={endConditionValue}
-              onChange={(e) => setEndConditionValue(e.target.value)}
+              onChange={setEndConditionValue}
             />
-          </label>
+          </div>
         )}
 
         <label className="checkbox-field">

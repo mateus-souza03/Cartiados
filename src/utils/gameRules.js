@@ -3,17 +3,17 @@
  * para permitir novas condições no futuro sem reescrever a aplicação.
  */
 export const END_CONDITIONS = {
+  LAST_SURVIVOR: 'last_survivor',
   ZERO_SCORE: 'zero_score',
   MAX_ROUNDS: 'max_rounds',
   TARGET_SCORE: 'target_score',
-  LAST_SURVIVOR: 'last_survivor',
 };
 
 export const END_CONDITION_LABELS = {
+  [END_CONDITIONS.LAST_SURVIVOR]: 'Terminar no último sobrevivente (demais zerados)',
   [END_CONDITIONS.ZERO_SCORE]: 'Terminar quando um jogador zerar os pontos',
   [END_CONDITIONS.MAX_ROUNDS]: 'Terminar após um número fixo de rodadas',
   [END_CONDITIONS.TARGET_SCORE]: 'Terminar quando alguém atingir uma pontuação alvo',
-  [END_CONDITIONS.LAST_SURVIVOR]: 'Terminar no último sobrevivente (demais zerados)',
 };
 
 const strategies = {

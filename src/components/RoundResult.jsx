@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import NumberStepper from './NumberStepper';
 
 export default function RoundResult({ players, declarations, results, onUpdate, onFinalize }) {
   const [error, setError] = useState('');
@@ -29,16 +30,14 @@ export default function RoundResult({ players, declarations, results, onUpdate, 
                 <span>Declarou</span>
                 <div className="static-value">{declarations[p.id]?.declared ?? 0}</div>
               </div>
-              <label className="field">
+              <div className="field">
                 <span>Pontos realizados</span>
-                <input
-                  type="number"
-                  min="0"
-                  inputMode="numeric"
+                <NumberStepper
+                  label="pontos realizados"
                   value={results[p.id] ?? ''}
-                  onChange={(e) => onUpdate(p.id, e.target.value)}
+                  onChange={(value) => onUpdate(p.id, value)}
                 />
-              </label>
+              </div>
             </div>
           </div>
         ))}

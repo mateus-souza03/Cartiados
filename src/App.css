@@ -30,6 +30,7 @@
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
   min-height: 52px;
+  touch-action: manipulation;
 }
 
 .btn:active {
@@ -174,6 +175,66 @@
 .field select:focus {
   outline: 2px solid var(--primary);
   outline-offset: 1px;
+}
+
+/* ---------- Number stepper ---------- */
+.stepper {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.stepper-btn {
+  appearance: none;
+  border: none;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  background: var(--badge-bg);
+  color: var(--primary);
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.1s ease, background-color 0.15s ease;
+}
+
+.stepper-btn:active {
+  transform: scale(0.9);
+  background: var(--primary);
+  color: var(--primary-contrast);
+}
+
+.stepper-value {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 0 4px;
+}
+
+.stepper-value:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+/* Remove native number spinner arrows across browsers */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .field-static .static-value {
@@ -461,6 +522,13 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
+}
+
+@media (max-width: 380px) {
+  .declaration-fields {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
 }
 
 .playing-step {

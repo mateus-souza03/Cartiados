@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import NumberStepper from './NumberStepper';
 
 export default function RoundDeclaration({ players, declarations, onUpdate, onConfirm }) {
   const [error, setError] = useState('');
@@ -29,26 +30,22 @@ export default function RoundDeclaration({ players, declarations, onUpdate, onCo
           <div key={p.id} className="declaration-card">
             <div className="declaration-name">{p.name}</div>
             <div className="declaration-fields">
-              <label className="field">
+              <div className="field">
                 <span>Cartas na mão</span>
-                <input
-                  type="number"
-                  min="0"
-                  inputMode="numeric"
+                <NumberStepper
+                  label="cartas na mão"
                   value={declarations[p.id]?.cards ?? ''}
-                  onChange={(e) => onUpdate(p.id, 'cards', e.target.value)}
+                  onChange={(value) => onUpdate(p.id, 'cards', value)}
                 />
-              </label>
-              <label className="field">
+              </div>
+              <div className="field">
                 <span>Pontos que fará</span>
-                <input
-                  type="number"
-                  min="0"
-                  inputMode="numeric"
+                <NumberStepper
+                  label="pontos que fará"
                   value={declarations[p.id]?.declared ?? ''}
-                  onChange={(e) => onUpdate(p.id, 'declared', e.target.value)}
+                  onChange={(value) => onUpdate(p.id, 'declared', value)}
                 />
-              </label>
+              </div>
             </div>
           </div>
         ))}
