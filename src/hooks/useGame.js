@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { calculateRoundScore, applyScoreChange } from '../utils/scoring';
+import { calculateCachetaRound } from '../utils/cachetaScoring';
 import { isGameOver } from '../utils/gameRules';
 import { loadGame, saveGame } from '../utils/storage';
 
@@ -7,6 +8,11 @@ export const PHASES = {
   DECLARATION: 'declaration',
   PLAYING: 'playing',
   RESULT: 'result',
+  SUMMARY: 'summary',
+};
+
+export const CACHETA_PHASES = {
+  ROUND: 'round',
   SUMMARY: 'summary',
 };
 
@@ -20,6 +26,14 @@ function createInitialDrafts(players) {
     declarations[p.id] = { declared: 0 };
   });
   return declarations;
+}
+
+function createParticipationDraft(players) {
+  const participation = {};
+  players.filter((p) => p.score > 0).forEach((p) => {
+    participation[p.id] = true;
+  });
+  return participation;
 }
 
 export function useGame() {
@@ -36,26 +50,40 @@ export function useGame() {
       score: config.initialScore,
     }));
 
-    const newGame = {
+    const base = {
       id: makeId(),
       createdAt: Date.now(),
       gameType: config.gameType,
       players,
       initialScore: config.initialScore,
-      cardsPerRound: config.cardsPerRound,
       allowNegative: config.allowNegative,
       endCondition: config.endCondition,
       endConditionValue: config.endConditionValue,
       round: 1,
-      phase: PHASES.DECLARATION,
-      declarations: createInitialDrafts(players),
-      results: {},
       history: [],
       finished: false,
     };
 
-    setGame(newGame);
+    if (config.gameType === 'cacheta') {
+      setGame({
+        ...base,
+        phase: CACHETA_PHASES.ROUND,
+        participation: createParticipationDraft(players),
+        winnerId: null,
+      });
+      return;
+    }
+
+    setGame({
+      ...base,
+      cardsPerRound: config.cardsPerRound,
+      phase: PHASES.DECLARATION,
+      declarations: createInitialDrafts(players),
+      results: {},
+    });
   }, []);
+
+  // ---------- F#dinha ----------
 
   const updateDeclaration = useCallback((playerId, field, value) => {
     setGame((prev) => ({
@@ -159,14 +187,109 @@ export function useGame() {
     });
   }, []);
 
+  // ---------- Cacheta ----------
+
+  const updateParticipation = useCallback((playerId, playing) => {
+    setGame((prev) => {
+      const participation = { ...prev.participation, [playerId]: playing };
+      const winnerId = !playing && prev.winnerId === playerId ? null : prev.winnerId;
+      return { ...prev, participation, winnerId };
+    });
+  }, []);
+
+  const setWinner = useCallback((playerId) => {
+    setGame((prev) => ({
+      ...prev,
+      winnerId: prev.winnerId === playerId ? null : playerId,
+    }));
+  }, []);
+
+  const finalizeCachetaRound = useCallback(() => {
+    setGame((prev) => {
+      const scoresBefore = {};
+      prev.players.forEach((p) => {
+        scoresBefore[p.id] = p.score;
+      });
+
+      const activePlayers = prev.players.filter((p) => p.score > 0);
+      const entries = calculateCachetaRound(activePlayers, prev.participation, prev.winnerId);
+
+      const updatedPlayers = prev.players.map((p) => {
+        const entry = entries.find((e) => e.playerId === p.id);
+        if (!entry) return p;
+        const nextScore = applyScoreChange(p.score, entry.scoreChange, prev.allowNegative);
+        return { ...p, score: nextScore };
+      });
+
+      const scoresAfter = {};
+      updatedPlayers.forEach((p) => {
+        scoresAfter[p.id] = p.score;
+      });
+
+      const historyEntry = {
+        round: prev.round,
+        entries,
+        scoresBefore,
+        scoresAfter,
+      };
+
+      const nextGame = {
+        ...prev,
+        players: updatedPlayers,
+        history: [...prev.history, historyEntry],
+        phase: CACHETA_PHASES.SUMMARY,
+      };
+
+      nextGame.finished = isGameOver(nextGame);
+
+      return nextGame;
+    });
+  }, []);
+
+  const nextCachetaRound = useCallback(() => {
+    setGame((prev) => {
+      if (prev.finished) return prev;
+      return {
+        ...prev,
+        round: prev.round + 1,
+        phase: CACHETA_PHASES.ROUND,
+        participation: createParticipationDraft(prev.players),
+        winnerId: null,
+      };
+    });
+  }, []);
+
+  // ---------- Comuns ----------
+
   const undoLastRound = useCallback(() => {
     setGame((prev) => {
       if (!prev.history.length) return prev;
       const lastEntry = prev.history[prev.history.length - 1];
       const restoredPlayers = prev.players.map((p) => ({
         ...p,
-        score: lastEntry.scoresBefore[p.id],
+        score: lastEntry.scoresBefore[p.id] ?? p.score,
       }));
+
+      if (prev.gameType === 'cacheta') {
+        const participation = {};
+        let winnerId = null;
+        lastEntry.entries.forEach((e) => {
+          participation[e.playerId] = e.playing;
+          if (e.won) winnerId = e.playerId;
+        });
+
+        return {
+          ...prev,
+          players: restoredPlayers,
+          history: prev.history.slice(0, -1),
+          round: lastEntry.round,
+          phase: CACHETA_PHASES.ROUND,
+          participation,
+          winnerId,
+          finished: false,
+        };
+      }
+
       const declarations = {};
       lastEntry.entries.forEach((e) => {
         declarations[e.playerId] = { declared: e.declared };
@@ -200,6 +323,10 @@ export function useGame() {
     updateResult,
     finalizeRound,
     nextRound,
+    updateParticipation,
+    setWinner,
+    finalizeCachetaRound,
+    nextCachetaRound,
     undoLastRound,
     resetGame,
   };

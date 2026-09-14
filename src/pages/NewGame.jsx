@@ -5,9 +5,11 @@ import NumberStepper from '../components/NumberStepper';
 
 export default function NewGame({ gameType, onCreate, onCancel }) {
   const gameTypeInfo = getGameType(gameType);
+  const isCacheta = gameTypeInfo.id === 'cacheta';
+
   const [playerCount, setPlayerCount] = useState(2);
   const [names, setNames] = useState(['', '']);
-  const [initialScore, setInitialScore] = useState(5);
+  const [initialScore, setInitialScore] = useState(isCacheta ? 7 : 5);
   const [cardsPerRound, setCardsPerRound] = useState(3);
   const [endCondition, setEndCondition] = useState(END_CONDITIONS.LAST_SURVIVOR);
   const [endConditionValue, setEndConditionValue] = useState(10);
@@ -15,7 +17,8 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
   const [error, setError] = useState('');
 
   const needsEndConditionValue =
-    endCondition === END_CONDITIONS.MAX_ROUNDS || endCondition === END_CONDITIONS.TARGET_SCORE;
+    !isCacheta &&
+    (endCondition === END_CONDITIONS.MAX_ROUNDS || endCondition === END_CONDITIONS.TARGET_SCORE);
 
   const handlePlayerCountChange = (value) => {
     const count = Math.max(2, Math.min(12, Number(value) || 2));
@@ -50,7 +53,7 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
       setError('A pontuação inicial não pode ser negativa.');
       return;
     }
-    if (cardsPerRound < 1) {
+    if (!isCacheta && cardsPerRound < 1) {
       setError('A quantidade de cartas deve ser pelo menos 1.');
       return;
     }
@@ -64,9 +67,9 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
       gameType: gameTypeInfo.id,
       players: names.map((n) => n.trim()),
       initialScore: Number(initialScore),
-      cardsPerRound: Number(cardsPerRound),
+      cardsPerRound: isCacheta ? undefined : Number(cardsPerRound),
       allowNegative,
-      endCondition,
+      endCondition: isCacheta ? END_CONDITIONS.LAST_SURVIVOR : endCondition,
       endConditionValue: Number(endConditionValue),
     });
   };
@@ -109,34 +112,45 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
           ))}
         </div>
 
-        <div className="field">
-          <span>Quantidade de cartas por rodada</span>
-          <NumberStepper label="quantidade de cartas por rodada" min={1} value={cardsPerRound} onChange={setCardsPerRound} />
-        </div>
-
-        <label className="field">
-          <span>Condição de encerramento</span>
-          <select value={endCondition} onChange={(e) => setEndCondition(e.target.value)}>
-            {Object.values(END_CONDITIONS).map((c) => (
-              <option key={c} value={c}>
-                {END_CONDITION_LABELS[c]}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        {needsEndConditionValue && (
+        {!isCacheta && (
           <div className="field">
-            <span>
-              {endCondition === END_CONDITIONS.MAX_ROUNDS ? 'Número de rodadas' : 'Pontuação alvo'}
-            </span>
-            <NumberStepper
-              label={endCondition === END_CONDITIONS.MAX_ROUNDS ? 'número de rodadas' : 'pontuação alvo'}
-              min={1}
-              value={endConditionValue}
-              onChange={setEndConditionValue}
-            />
+            <span>Quantidade de cartas por rodada</span>
+            <NumberStepper label="quantidade de cartas por rodada" min={1} value={cardsPerRound} onChange={setCardsPerRound} />
           </div>
+        )}
+
+        {isCacheta ? (
+          <p className="section-hint">
+            A Cacheta termina quando restar apenas um jogador com pontos. Jogadores com 1 ponto são
+            obrigados a jogar a rodada.
+          </p>
+        ) : (
+          <>
+            <label className="field">
+              <span>Condição de encerramento</span>
+              <select value={endCondition} onChange={(e) => setEndCondition(e.target.value)}>
+                {Object.values(END_CONDITIONS).map((c) => (
+                  <option key={c} value={c}>
+                    {END_CONDITION_LABELS[c]}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            {needsEndConditionValue && (
+              <div className="field">
+                <span>
+                  {endCondition === END_CONDITIONS.MAX_ROUNDS ? 'Número de rodadas' : 'Pontuação alvo'}
+                </span>
+                <NumberStepper
+                  label={endCondition === END_CONDITIONS.MAX_ROUNDS ? 'número de rodadas' : 'pontuação alvo'}
+                  min={1}
+                  value={endConditionValue}
+                  onChange={setEndConditionValue}
+                />
+              </div>
+            )}
+          </>
         )}
 
         <label className="checkbox-field">

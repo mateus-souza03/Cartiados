@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import SelectGameType from './pages/SelectGameType';
 import NewGame from './pages/NewGame';
 import Game from './pages/Game';
+import CachetaGame from './pages/CachetaGame';
 import GameOver from './pages/GameOver';
 import './App.css';
 
@@ -22,16 +23,7 @@ function App() {
   const [selectedGameType, setSelectedGameType] = useState(game?.gameType ?? null);
   const [confirmNewGame, setConfirmNewGame] = useState(false);
 
-  const actions = {
-    updateDeclaration: gameApi.updateDeclaration,
-    updateCardsPerRound: gameApi.updateCardsPerRound,
-    confirmDeclarations: gameApi.confirmDeclarations,
-    startResultEntry: gameApi.startResultEntry,
-    updateResult: gameApi.updateResult,
-    finalizeRound: gameApi.finalizeRound,
-    nextRound: gameApi.nextRound,
-    undoLastRound: gameApi.undoLastRound,
-  };
+  const { game: _game, ...actions } = gameApi;
 
   const goToPreviousGameOrHome = () => setView(game ? (game.finished ? 'gameover' : 'game') : 'home');
 
@@ -98,8 +90,9 @@ function App() {
   }
 
   if (view === 'game' && game) {
+    const GamePage = game.gameType === 'cacheta' ? CachetaGame : Game;
     return (
-      <Game
+      <GamePage
         game={game}
         actions={actions}
         theme={theme}

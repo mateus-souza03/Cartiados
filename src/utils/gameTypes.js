@@ -10,6 +10,12 @@ export const GAME_TYPES = [
     icon: '🃏',
     tagline: 'Declare quantos pontos vai fazer e acerte exatamente — nem mais, nem menos.',
   },
+  {
+    id: 'cacheta',
+    name: 'Cacheta',
+    icon: '🎴',
+    tagline: 'Jogue ou passe a rodada. Quem não joga perde 1, quem joga e não bate perde 2.',
+  },
 ];
 
 export function getGameType(id) {

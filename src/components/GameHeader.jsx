@@ -25,9 +25,11 @@ export default function GameHeader({
       </p>
       <div className="game-header-meta">
         <span className="badge">Rodada {round}</span>
-        <span className="badge badge-muted">
-          🃏 {cardsPerRound} {cardsPerRound === 1 ? 'carta' : 'cartas'}
-        </span>
+        {cardsPerRound !== undefined && (
+          <span className="badge badge-muted">
+            🃏 {cardsPerRound} {cardsPerRound === 1 ? 'carta' : 'cartas'}
+          </span>
+        )}
         {canUndo && (
           <button type="button" className="link-button" onClick={onUndo}>
             Desfazer última rodada
