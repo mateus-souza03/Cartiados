@@ -1,21 +1,16 @@
 import { useState } from 'react';
 import GameHeader from '../components/GameHeader';
-import PlayerCard from '../components/PlayerCard';
 import ScoreBoard from '../components/ScoreBoard';
 import RoundDeclaration from '../components/RoundDeclaration';
 import RoundResult from '../components/RoundResult';
 import RoundSummary from '../components/RoundSummary';
 import RoundHistory from '../components/RoundHistory';
 import { PHASES } from '../hooks/useGame';
-import { getRankedPlayers } from '../utils/gameRules';
 
 export default function Game({ game, actions, theme, onToggleTheme, onViewFinalResult, onNewGame }) {
   const [confirmUndo, setConfirmUndo] = useState(false);
 
-  const rankedIds = getRankedPlayers(game.players).map((p) => p.id);
-
   const lastRound = game.history[game.history.length - 1];
-  const showResultCards = game.phase === PHASES.SUMMARY && lastRound?.round === game.round;
 
   const handleUndoClick = () => setConfirmUndo(true);
   const handleUndoConfirm = () => {
@@ -49,22 +44,6 @@ export default function Game({ game, actions, theme, onToggleTheme, onViewFinalR
           </div>
         </div>
       )}
-
-      <div className="player-grid">
-        {game.players.map((p) => (
-          <PlayerCard
-            key={p.id}
-            player={p}
-            rank={rankedIds.indexOf(p.id)}
-            declaration={
-              game.phase === PHASES.RESULT || game.phase === PHASES.SUMMARY
-                ? game.declarations[p.id]
-                : null
-            }
-            resultEntry={showResultCards ? lastRound.entries.find((e) => e.playerId === p.id) : null}
-          />
-        ))}
-      </div>
 
       {game.phase === PHASES.DECLARATION && (
         <RoundDeclaration
