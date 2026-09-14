@@ -22,6 +22,7 @@ function App() {
 
   const actions = {
     updateDeclaration: gameApi.updateDeclaration,
+    updateCardsPerRound: gameApi.updateCardsPerRound,
     confirmDeclarations: gameApi.confirmDeclarations,
     startResultEntry: gameApi.startResultEntry,
     updateResult: gameApi.updateResult,

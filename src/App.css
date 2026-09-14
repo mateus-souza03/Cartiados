@@ -405,6 +405,11 @@ input[type='number']::-webkit-outer-spin-button {
   padding: 14px;
 }
 
+.declaration-card-round {
+  border: 1px solid var(--primary);
+  margin-bottom: 16px;
+}
+
 .declaration-name {
   font-weight: 700;
   margin-bottom: 10px;

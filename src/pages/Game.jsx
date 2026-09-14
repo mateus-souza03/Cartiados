@@ -49,7 +49,9 @@ export default function Game({ game, actions, theme, onToggleTheme, onViewFinalR
         <RoundDeclaration
           players={game.players}
           declarations={game.declarations}
+          cardsPerRound={game.cardsPerRound}
           onUpdate={actions.updateDeclaration}
+          onUpdateCardsPerRound={actions.updateCardsPerRound}
           onConfirm={actions.confirmDeclarations}
         />
       )}

@@ -66,8 +66,16 @@ export function useGame() {
     }));
   }, []);
 
+  const updateCardsPerRound = useCallback((value) => {
+    setGame((prev) => ({ ...prev, cardsPerRound: value }));
+  }, []);
+
   const confirmDeclarations = useCallback(() => {
-    setGame((prev) => ({ ...prev, phase: PHASES.PLAYING }));
+    setGame((prev) => ({
+      ...prev,
+      cardsPerRound: Math.max(1, Number(prev.cardsPerRound) || 1),
+      phase: PHASES.PLAYING,
+    }));
   }, []);
 
   const startResultEntry = useCallback(() => {
@@ -168,6 +176,7 @@ export function useGame() {
         players: restoredPlayers,
         history: prev.history.slice(0, -1),
         round: lastEntry.round,
+        cardsPerRound: lastEntry.cardsPerRound,
         phase: PHASES.DECLARATION,
         declarations,
         results: {},
@@ -184,6 +193,7 @@ export function useGame() {
     game,
     createGame,
     updateDeclaration,
+    updateCardsPerRound,
     confirmDeclarations,
     startResultEntry,
     updateResult,

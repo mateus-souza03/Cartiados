@@ -1,10 +1,21 @@
 import { useState } from 'react';
 import NumberStepper from './NumberStepper';
 
-export default function RoundDeclaration({ players, declarations, onUpdate, onConfirm }) {
+export default function RoundDeclaration({
+  players,
+  declarations,
+  cardsPerRound,
+  onUpdate,
+  onUpdateCardsPerRound,
+  onConfirm,
+}) {
   const [error, setError] = useState('');
 
   const handleConfirm = () => {
+    if (cardsPerRound === '' || cardsPerRound === null || Number(cardsPerRound) < 1) {
+      setError('Informe a quantidade de cartas desta rodada.');
+      return;
+    }
     for (const p of players) {
       const d = declarations[p.id];
       if (d.declared === '' || d.declared === null || Number(d.declared) < 0) {
@@ -19,7 +30,14 @@ export default function RoundDeclaration({ players, declarations, onUpdate, onCo
   return (
     <section className="round-step">
       <h2 className="section-title">Declarações</h2>
-      <p className="section-subtitle">Cada jogador informa quantos pontos pretende fazer nesta rodada.</p>
+      <p className="section-subtitle">Defina as cartas da rodada e quantos pontos cada jogador pretende fazer.</p>
+
+      <div className="declaration-card declaration-card-round">
+        <div className="declaration-name">Cartas nesta rodada</div>
+        <div className="field">
+          <NumberStepper label="cartas nesta rodada" min={1} value={cardsPerRound} onChange={onUpdateCardsPerRound} />
+        </div>
+      </div>
 
       <div className="declaration-list">
         {players.map((p) => (
