@@ -44,7 +44,9 @@ export default function RoundHistory({ history, players }) {
           <div className="history-detail-list">
             {history.map((round) => (
               <div key={round.round} className="history-round">
-                <h3>Rodada {round.round}</h3>
+                <h3>
+                  Rodada {round.round}: {round.cardsPerRound} {round.cardsPerRound === 1 ? 'carta' : 'cartas'}
+                </h3>
                 {round.entries.map((e) => (
                   <div key={e.playerId} className="history-entry">
                     <strong>{e.playerName}</strong>
