@@ -14,10 +14,10 @@ function makeId() {
   return Math.random().toString(36).slice(2, 10);
 }
 
-function createInitialDrafts(players, cardsPerRound) {
+function createInitialDrafts(players) {
   const declarations = {};
   players.forEach((p) => {
-    declarations[p.id] = { cards: cardsPerRound, declared: 0 };
+    declarations[p.id] = { declared: 0 };
   });
   return declarations;
 }
@@ -47,7 +47,7 @@ export function useGame() {
       endConditionValue: config.endConditionValue,
       round: 1,
       phase: PHASES.DECLARATION,
-      declarations: createInitialDrafts(players, config.cardsPerRound),
+      declarations: createInitialDrafts(players),
       results: {},
       history: [],
       finished: false,
@@ -96,13 +96,11 @@ export function useGame() {
 
       const entries = prev.players.map((p) => {
         const declared = Number(prev.declarations[p.id]?.declared ?? 0);
-        const cards = Number(prev.declarations[p.id]?.cards ?? prev.cardsPerRound);
         const achieved = Number(prev.results[p.id] ?? 0);
         const outcome = calculateRoundScore(declared, achieved);
         return {
           playerId: p.id,
           playerName: p.name,
-          cards,
           ...outcome,
         };
       });
@@ -146,7 +144,7 @@ export function useGame() {
         ...prev,
         round: prev.round + 1,
         phase: PHASES.DECLARATION,
-        declarations: createInitialDrafts(prev.players, prev.cardsPerRound),
+        declarations: createInitialDrafts(prev.players),
         results: {},
       };
     });
@@ -162,7 +160,7 @@ export function useGame() {
       }));
       const declarations = {};
       lastEntry.entries.forEach((e) => {
-        declarations[e.playerId] = { cards: e.cards, declared: e.declared };
+        declarations[e.playerId] = { declared: e.declared };
       });
 
       return {
