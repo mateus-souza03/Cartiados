@@ -16,6 +16,12 @@ export const GAME_TYPES = [
     icon: '🎴',
     tagline: 'Jogue ou passe a rodada. Quem não joga perde 1, quem joga e não bate perde 2.',
   },
+  {
+    id: 'truco',
+    name: 'Truco',
+    icon: '♠️',
+    tagline: 'Marque os pontos de cada mão (1, 3, 6, 9 ou 12). Quem fizer 12 primeiro vence a partida.',
+  },
 ];
 
 export function getGameType(id) {

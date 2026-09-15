@@ -6,9 +6,10 @@ import NumberStepper from '../components/NumberStepper';
 export default function NewGame({ gameType, onCreate, onCancel }) {
   const gameTypeInfo = getGameType(gameType);
   const isCacheta = gameTypeInfo.id === 'cacheta';
+  const isTruco = gameTypeInfo.id === 'truco';
 
   const [playerCount, setPlayerCount] = useState(2);
-  const [names, setNames] = useState(['', '']);
+  const [names, setNames] = useState(() => (isTruco ? ['Nós', 'Eles'] : ['', '']));
   const [initialScore, setInitialScore] = useState(isCacheta ? 7 : 5);
   const [cardsPerRound, setCardsPerRound] = useState(3);
   const [endCondition, setEndCondition] = useState(END_CONDITIONS.LAST_SURVIVOR);
@@ -18,6 +19,7 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
 
   const needsEndConditionValue =
     !isCacheta &&
+    !isTruco &&
     (endCondition === END_CONDITIONS.MAX_ROUNDS || endCondition === END_CONDITIONS.TARGET_SCORE);
 
   const handlePlayerCountChange = (value) => {
@@ -53,7 +55,7 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
       setError('A pontuação inicial não pode ser negativa.');
       return;
     }
-    if (!isCacheta && cardsPerRound < 1) {
+    if (!isCacheta && !isTruco && cardsPerRound < 1) {
       setError('A quantidade de cartas deve ser pelo menos 1.');
       return;
     }
@@ -66,11 +68,11 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
     onCreate({
       gameType: gameTypeInfo.id,
       players: names.map((n) => n.trim()),
-      initialScore: Number(initialScore),
-      cardsPerRound: isCacheta ? undefined : Number(cardsPerRound),
-      allowNegative,
-      endCondition: isCacheta ? END_CONDITIONS.LAST_SURVIVOR : endCondition,
-      endConditionValue: Number(endConditionValue),
+      initialScore: isTruco ? 0 : Number(initialScore),
+      cardsPerRound: isCacheta || isTruco ? undefined : Number(cardsPerRound),
+      allowNegative: isTruco ? false : allowNegative,
+      endCondition: isTruco ? 'manual' : isCacheta ? END_CONDITIONS.LAST_SURVIVOR : endCondition,
+      endConditionValue: isTruco ? 0 : Number(endConditionValue),
     });
   };
 
@@ -82,37 +84,41 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
       <h1 className="page-title">Nova Partida</h1>
 
       <form onSubmit={handleSubmit} className="form">
-        <div className="field">
-          <span>Pontuação inicial</span>
-          <NumberStepper label="pontuação inicial" min={0} value={initialScore} onChange={setInitialScore} />
-        </div>
+        {!isTruco && (
+          <div className="field">
+            <span>Pontuação inicial</span>
+            <NumberStepper label="pontuação inicial" min={0} value={initialScore} onChange={setInitialScore} />
+          </div>
+        )}
 
-        <div className="field">
-          <span>Quantidade de jogadores</span>
-          <NumberStepper
-            label="quantidade de jogadores"
-            min={2}
-            max={12}
-            value={playerCount}
-            onChange={handlePlayerCountChange}
-          />
-        </div>
+        {!isTruco && (
+          <div className="field">
+            <span>Quantidade de jogadores</span>
+            <NumberStepper
+              label="quantidade de jogadores"
+              min={2}
+              max={12}
+              value={playerCount}
+              onChange={handlePlayerCountChange}
+            />
+          </div>
+        )}
 
         <div className="player-name-list">
           {names.map((name, i) => (
             <label className="field" key={i}>
-              <span>Jogador {i + 1}</span>
+              <span>{isTruco ? `Time ${i + 1}` : `Jogador ${i + 1}`}</span>
               <input
                 type="text"
                 value={name}
-                placeholder={`Nome do jogador ${i + 1}`}
+                placeholder={isTruco ? `Nome do time ${i + 1}` : `Nome do jogador ${i + 1}`}
                 onChange={(e) => handleNameChange(i, e.target.value)}
               />
             </label>
           ))}
         </div>
 
-        {!isCacheta && (
+        {!isCacheta && !isTruco && (
           <div className="field">
             <span>Quantidade de cartas por rodada</span>
             <NumberStepper label="quantidade de cartas por rodada" min={1} value={cardsPerRound} onChange={setCardsPerRound} />
@@ -123,6 +129,11 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
           <p className="section-hint">
             A Cacheta termina quando restar apenas um jogador com pontos. Jogadores com 1 ponto são
             obrigados a jogar a rodada.
+          </p>
+        ) : isTruco ? (
+          <p className="section-hint">
+            Cada mão vale 1, 3, 6, 9 ou 12 pontos. Quem fizer 12 primeiro vence a mão e soma 1 no placar da
+            partida — jogue quantas mãos quiser e use &quot;Nova partida&quot; quando encerrar.
           </p>
         ) : (
           <>
@@ -153,14 +164,16 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
           </>
         )}
 
-        <label className="checkbox-field">
-          <input
-            type="checkbox"
-            checked={allowNegative}
-            onChange={(e) => setAllowNegative(e.target.checked)}
-          />
-          <span>Permitir pontuação negativa</span>
-        </label>
+        {!isTruco && (
+          <label className="checkbox-field">
+            <input
+              type="checkbox"
+              checked={allowNegative}
+              onChange={(e) => setAllowNegative(e.target.checked)}
+            />
+            <span>Permitir pontuação negativa</span>
+          </label>
+        )}
 
         {error && <p className="form-error">{error}</p>}
 

@@ -3,6 +3,7 @@ import { getGameType } from '../utils/gameTypes';
 
 export default function GameHeader({
   round,
+  roundLabel = 'Rodada',
   cardsPerRound,
   gameType,
   starterName,
@@ -25,7 +26,7 @@ export default function GameHeader({
         {gameTypeInfo.icon} {gameTypeInfo.name}
       </p>
       <div className="game-header-meta">
-        <span className="badge">Rodada {round}</span>
+        <span className="badge">{roundLabel} {round}</span>
         {cardsPerRound !== undefined && (
           <span className="badge badge-muted">
             🃏 {cardsPerRound} {cardsPerRound === 1 ? 'carta' : 'cartas'}

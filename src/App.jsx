@@ -6,6 +6,7 @@ import SelectGameType from './pages/SelectGameType';
 import NewGame from './pages/NewGame';
 import Game from './pages/Game';
 import CachetaGame from './pages/CachetaGame';
+import TrucoGame from './pages/TrucoGame';
 import GameOver from './pages/GameOver';
 import Watermark from './components/Watermark';
 import './App.css';
@@ -89,7 +90,8 @@ function App() {
   } else if (view === 'selectGame') {
     content = <SelectGameType onSelect={handleSelectGameType} onBack={goToPreviousGameOrHome} />;
   } else if (view === 'game' && game) {
-    const GamePage = game.gameType === 'cacheta' ? CachetaGame : Game;
+    const GamePage =
+      game.gameType === 'cacheta' ? CachetaGame : game.gameType === 'truco' ? TrucoGame : Game;
     content = (
       <GamePage
         game={game}
