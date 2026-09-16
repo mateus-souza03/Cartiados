@@ -11,7 +11,7 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
   const [playerCount, setPlayerCount] = useState(2);
   const [names, setNames] = useState(() => (isTruco ? ['Nós', 'Eles'] : ['', '']));
   const [initialScore, setInitialScore] = useState(isCacheta ? 7 : 5);
-  const [cardsPerRound, setCardsPerRound] = useState(3);
+  const [cardsPerRound, setCardsPerRound] = useState(1);
   const [endCondition, setEndCondition] = useState(END_CONDITIONS.LAST_SURVIVOR);
   const [endConditionValue, setEndConditionValue] = useState(10);
   const [allowNegative, setAllowNegative] = useState(false);
