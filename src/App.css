@@ -68,8 +68,10 @@
   min-height: 36px;
   padding: 8px 14px;
   font-size: 13px;
-  border: 1px solid var(--card-border);
+  border: 2px solid var(--primary);
   border-radius: 999px;
+  color: var(--primary);
+  font-weight: 700;
 }
 
 .btn-danger {
