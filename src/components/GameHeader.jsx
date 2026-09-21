@@ -21,7 +21,12 @@ export default function GameHeader({
     <header className="game-header">
       <div className="game-header-top">
         <h1 className="game-title">{title}</h1>
-        <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+        <div className="game-header-actions">
+          <button type="button" className="btn btn-ghost btn-small" onClick={onNewGame}>
+            Nova partida
+          </button>
+          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+        </div>
       </div>
       <p className="game-header-subtitle">
         {gameTypeInfo.icon} {gameTypeInfo.name}
@@ -40,9 +45,6 @@ export default function GameHeader({
             Desfazer última rodada
           </button>
         )}
-        <button type="button" className="link-button" onClick={onNewGame}>
-          Nova partida
-        </button>
       </div>
     </header>
   );
