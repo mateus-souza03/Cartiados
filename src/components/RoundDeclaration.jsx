@@ -12,12 +12,14 @@ export default function RoundDeclaration({
 }) {
   const [error, setError] = useState('');
 
+  const activePlayers = players.filter((p) => p.score > 0);
+
   const handleConfirm = () => {
     if (cardsPerRound === '' || cardsPerRound === null || Number(cardsPerRound) < 1) {
       setError('Informe a quantidade de cartas desta rodada.');
       return;
     }
-    for (const p of players) {
+    for (const p of activePlayers) {
       const d = declarations[p.id];
       if (d.declared === '' || d.declared === null || Number(d.declared) < 0) {
         setError(`Informe quantos pontos ${p.name} pretende fazer.`);
@@ -41,7 +43,7 @@ export default function RoundDeclaration({
       </div>
 
       <div className="declaration-list">
-        {players.map((p) => (
+        {activePlayers.map((p) => (
           <div key={p.id} className="declaration-card">
             <div className="declaration-name">
               {p.name}

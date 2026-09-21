@@ -4,8 +4,10 @@ import NumberStepper from './NumberStepper';
 export default function RoundResult({ players, declarations, results, onUpdate, onFinalize }) {
   const [error, setError] = useState('');
 
+  const activePlayers = players.filter((p) => p.score > 0);
+
   const handleFinalize = () => {
-    for (const p of players) {
+    for (const p of activePlayers) {
       const value = results[p.id];
       if (value === '' || value === null || value === undefined || Number(value) < 0) {
         setError(`Informe quantos pontos ${p.name} fez.`);
@@ -22,7 +24,7 @@ export default function RoundResult({ players, declarations, results, onUpdate, 
       <p className="section-subtitle">Informe quantos pontos cada jogador realmente fez.</p>
 
       <div className="declaration-list">
-        {players.map((p) => (
+        {activePlayers.map((p) => (
           <div key={p.id} className="declaration-card">
             <div className="declaration-name">{p.name}</div>
             <div className="declaration-fields">
