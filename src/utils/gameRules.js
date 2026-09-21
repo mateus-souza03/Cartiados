@@ -70,6 +70,48 @@ export function getRoundStarter(players, round) {
 }
 
 /**
+ * Jogador que distribui as cartas nesta rodada, rotacionando em ordem fixa.
+ * Pula jogadores eliminados (pontuação zerada).
+ */
+export function getRoundDealer(players, round) {
+  return getRoundStarter(players, round);
+}
+
+/**
+ * Jogador que começa a jogar a rodada: o próximo ativo após o distribuidor.
+ */
+export function getRoundStarterAfterDealer(players, round) {
+  if (!players.length) return null;
+  const n = players.length;
+  const dealer = getRoundDealer(players, round);
+  const dealerIndex = players.findIndex((p) => p.id === dealer.id);
+
+  for (let i = 1; i <= n; i++) {
+    const candidate = players[(dealerIndex + i) % n];
+    if (candidate.score > 0) return candidate;
+  }
+
+  return players[(dealerIndex + 1) % n];
+}
+
+/**
+ * "Pé" da rodada: o último a jogar, ativo, imediatamente antes do distribuidor.
+ */
+export function getRoundPe(players, round) {
+  if (!players.length) return null;
+  const n = players.length;
+  const dealer = getRoundDealer(players, round);
+  const dealerIndex = players.findIndex((p) => p.id === dealer.id);
+
+  for (let i = 1; i <= n; i++) {
+    const candidate = players[(dealerIndex - i + n * 2) % n];
+    if (candidate.score > 0) return candidate;
+  }
+
+  return players[(dealerIndex - 1 + n) % n];
+}
+
+/**
  * Reordena a lista para começar pelo jogador informado, mantendo a ordem
  * de mesa a partir dali (dá a volta para os que vêm antes dele).
  */

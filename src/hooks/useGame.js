@@ -126,7 +126,7 @@ export function useGame() {
     setGame((prev) => {
       const results = {};
       prev.players.forEach((p) => {
-        results[p.id] = '';
+        results[p.id] = 0;
       });
       return { ...prev, phase: PHASES.RESULT, results };
     });
