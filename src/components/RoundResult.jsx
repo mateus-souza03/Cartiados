@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import NumberStepper from './NumberStepper';
 
-export default function RoundResult({ players, declarations, results, dealerId, starterId, peId, onUpdate, onFinalize }) {
+export default function RoundResult({ players, declarations, results, dealerId, starterId, onUpdate, onFinalize }) {
   const [error, setError] = useState('');
 
   const activePlayers = players.filter((p) => p.score > 0);
@@ -28,9 +28,8 @@ export default function RoundResult({ players, declarations, results, dealerId, 
           <div key={p.id} className="declaration-card">
             <div className="declaration-name">
               {p.name}
-              {p.id === dealerId && <span className="badge badge-muted">🃏 Dá as cartas</span>}
+              {p.id === dealerId && <span className="badge badge-muted">🃏 Dá as cartas / Pé</span>}
               {p.id === starterId && <span className="badge starter-badge">🎯 Começa</span>}
-              {p.id === peId && <span className="badge badge-muted">🦶 Pé</span>}
             </div>
             <div className="declaration-fields">
               <div className="field field-static">

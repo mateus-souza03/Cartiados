@@ -106,18 +106,16 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
 
         <div className="player-name-list">
           {names.map((name, i) => {
-            const isFodinha = !isCacheta && !isTruco;
-            const isDealer = isFodinha && i === 0;
-            const isStarter = isFodinha && i === 1;
-            const isPe = isFodinha && i === names.length - 1 && names.length > 1;
+            const showRoles = !isTruco;
+            const isDealer = showRoles && i === 0;
+            const isStarter = showRoles && i === 1;
 
             return (
             <label className="field" key={i}>
               <span>
                 {isTruco ? `Time ${i + 1}` : `Jogador ${i + 1}`}
-                {isDealer && <span className="badge badge-muted"> 🃏 Dá as cartas</span>}
+                {isDealer && <span className="badge badge-muted"> 🃏 Dá as cartas / Pé</span>}
                 {isStarter && <span className="badge starter-badge"> 🎯 Começa</span>}
-                {isPe && <span className="badge badge-muted"> 🦶 Pé</span>}
               </span>
               <input
                 type="text"

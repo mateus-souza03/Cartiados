@@ -5,6 +5,7 @@ export default function CachetaRoundInput({
   players,
   participation,
   winnerId,
+  dealerId,
   starterId,
   onToggleParticipation,
   onSelectWinner,
@@ -38,6 +39,7 @@ export default function CachetaRoundInput({
             <div key={p.id} className="declaration-card">
               <div className="declaration-name">
                 {p.name}
+                {p.id === dealerId && <span className="badge badge-muted">🃏 Dá as cartas / Pé</span>}
                 {p.id === starterId && <span className="badge starter-badge">🎯 Começa</span>}
                 {forced && <span className="badge badge-muted cacheta-forced-badge">Obrigado a jogar</span>}
               </div>

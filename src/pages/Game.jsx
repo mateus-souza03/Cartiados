@@ -6,7 +6,7 @@ import RoundResult from '../components/RoundResult';
 import RoundSummary from '../components/RoundSummary';
 import RoundHistory from '../components/RoundHistory';
 import { PHASES } from '../hooks/useGame';
-import { getRoundDealer, getRoundStarterAfterDealer, getRoundPe, rotateToStart } from '../utils/gameRules';
+import { getRoundDealer, getRoundStarterAfterDealer, rotateToStart } from '../utils/gameRules';
 
 export default function Game({ game, actions, theme, onToggleTheme, onViewFinalResult, onNewGame }) {
   const [confirmUndo, setConfirmUndo] = useState(false);
@@ -14,7 +14,6 @@ export default function Game({ game, actions, theme, onToggleTheme, onViewFinalR
   const lastRound = game.history[game.history.length - 1];
   const dealer = getRoundDealer(game.players, game.round);
   const starter = getRoundStarterAfterDealer(game.players, game.round);
-  const pe = getRoundPe(game.players, game.round);
   const orderedPlayers = rotateToStart(game.players, starter?.id);
 
   const handleUndoClick = () => setConfirmUndo(true);
@@ -31,7 +30,6 @@ export default function Game({ game, actions, theme, onToggleTheme, onViewFinalR
         gameType={game.gameType}
         dealerName={dealer?.name}
         starterName={starter?.name}
-        peName={pe?.name}
         theme={theme}
         onToggleTheme={onToggleTheme}
         onUndo={handleUndoClick}
@@ -61,7 +59,6 @@ export default function Game({ game, actions, theme, onToggleTheme, onViewFinalR
           cardsPerRound={game.cardsPerRound}
           dealerId={dealer?.id}
           starterId={starter?.id}
-          peId={pe?.id}
           onUpdate={actions.updateDeclaration}
           onUpdateCardsPerRound={actions.updateCardsPerRound}
           onConfirm={actions.confirmDeclarations}
@@ -89,7 +86,6 @@ export default function Game({ game, actions, theme, onToggleTheme, onViewFinalR
           results={game.results}
           dealerId={dealer?.id}
           starterId={starter?.id}
-          peId={pe?.id}
           onUpdate={actions.updateResult}
           onFinalize={actions.finalizeRound}
         />

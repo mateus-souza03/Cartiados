@@ -95,20 +95,10 @@ export function getRoundStarterAfterDealer(players, round) {
 }
 
 /**
- * "Pé" da rodada: o último a jogar, ativo, imediatamente antes do distribuidor.
+ * "Pé" da rodada: quem dá as cartas é sempre o pé também.
  */
 export function getRoundPe(players, round) {
-  if (!players.length) return null;
-  const n = players.length;
-  const dealer = getRoundDealer(players, round);
-  const dealerIndex = players.findIndex((p) => p.id === dealer.id);
-
-  for (let i = 1; i <= n; i++) {
-    const candidate = players[(dealerIndex - i + n * 2) % n];
-    if (candidate.score > 0) return candidate;
-  }
-
-  return players[(dealerIndex - 1 + n) % n];
+  return getRoundDealer(players, round);
 }
 
 /**
