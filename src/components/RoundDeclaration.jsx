@@ -23,10 +23,13 @@ export default function RoundDeclaration({
   const allOthersDeclared =
     otherPlayers.length > 0 && otherPlayers.every((p) => isDeclared(declarations[p.id]?.declared));
 
+  const isSingleCard = Number(cardsPerRound) === 1;
+
   const sumOthers = otherPlayers.reduce((acc, p) => acc + Number(declarations[p.id]?.declared || 0), 0);
   const forbiddenValue = Number(cardsPerRound) - sumOthers;
   const lastDeclared = lastPlayer ? declarations[lastPlayer.id]?.declared : undefined;
   const showForbidden =
+    !isSingleCard &&
     allOthersDeclared &&
     cardsPerRound !== '' &&
     cardsPerRound !== null &&
@@ -50,6 +53,7 @@ export default function RoundDeclaration({
       }
     }
     if (
+      !isSingleCard &&
       lastPlayer &&
       showForbidden &&
       Number(declarations[lastPlayer.id]?.declared) === forbiddenValue
@@ -88,7 +92,7 @@ export default function RoundDeclaration({
               <span>Pontos que fará</span>
               <NumberStepper
                 label="pontos que fará"
-                max={cardsPerRound || undefined}
+                max={isSingleCard ? undefined : cardsPerRound || undefined}
                 value={declarations[p.id]?.declared ?? ''}
                 onChange={(value) => {
                   onUpdate(p.id, 'declared', value);
