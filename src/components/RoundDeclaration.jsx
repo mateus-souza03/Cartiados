@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import NumberStepper from './NumberStepper';
 
 export default function RoundDeclaration({
@@ -12,6 +12,7 @@ export default function RoundDeclaration({
   onConfirm,
 }) {
   const [error, setError] = useState('');
+  const [lastTouched, setLastTouched] = useState(false);
 
   const activePlayers = players.filter((p) => p.score > 0);
   const lastPlayer = activePlayers[activePlayers.length - 1];
@@ -30,7 +31,11 @@ export default function RoundDeclaration({
     cardsPerRound !== '' &&
     cardsPerRound !== null &&
     forbiddenValue >= 0 &&
-    (!isDeclared(lastDeclared) || Number(lastDeclared) === forbiddenValue);
+    (!lastTouched || Number(lastDeclared) === forbiddenValue);
+
+  useEffect(() => {
+    setLastTouched(false);
+  }, [dealerId]);
 
   const handleConfirm = () => {
     if (cardsPerRound === '' || cardsPerRound === null || Number(cardsPerRound) < 1) {
@@ -85,7 +90,10 @@ export default function RoundDeclaration({
                 label="pontos que fará"
                 max={cardsPerRound || undefined}
                 value={declarations[p.id]?.declared ?? ''}
-                onChange={(value) => onUpdate(p.id, 'declared', value)}
+                onChange={(value) => {
+                  onUpdate(p.id, 'declared', value);
+                  if (p.id === lastPlayer?.id) setLastTouched(true);
+                }}
               />
             </div>
           </div>
