@@ -1,4 +1,5 @@
 import { getRankedPlayers } from '../utils/gameRules';
+import SummaryScoreRow from './SummaryScoreRow';
 
 export default function CachetaRoundSummary({ round, players, finished, onNextRound, onFinish }) {
   const ranked = getRankedPlayers(players);
@@ -32,10 +33,7 @@ export default function CachetaRoundSummary({ round, players, finished, onNextRo
 
       <div className="summary-scores">
         {ranked.map((p) => (
-          <div key={p.id} className="summary-score-row">
-            <span>{p.name}</span>
-            <strong>{p.score} pontos</strong>
-          </div>
+          <SummaryScoreRow key={p.id} player={p} before={round.scoresBefore?.[p.id]} />
         ))}
       </div>
 

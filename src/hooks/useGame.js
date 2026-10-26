@@ -28,7 +28,7 @@ function makeId() {
 function createInitialDrafts(players) {
   const declarations = {};
   players.forEach((p) => {
-    declarations[p.id] = { declared: 0 };
+    declarations[p.id] = { declared: '' };
   });
   return declarations;
 }
@@ -122,11 +122,15 @@ export function useGame() {
     }));
   }, []);
 
+  const editDeclarations = useCallback(() => {
+    setGame((prev) => ({ ...prev, phase: PHASES.DECLARATION }));
+  }, []);
+
   const startResultEntry = useCallback(() => {
     setGame((prev) => {
       const results = {};
       prev.players.forEach((p) => {
-        results[p.id] = 0;
+        results[p.id] = '';
       });
       return { ...prev, phase: PHASES.RESULT, results };
     });
@@ -393,6 +397,7 @@ export function useGame() {
     updateDeclaration,
     updateCardsPerRound,
     confirmDeclarations,
+    editDeclarations,
     startResultEntry,
     updateResult,
     finalizeRound,
