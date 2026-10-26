@@ -1,14 +1,25 @@
 import { useState } from 'react';
 import GameHeader from '../components/GameHeader';
 import ScoreBoard from '../components/ScoreBoard';
-import CachetaRoundInput from '../components/CachetaRoundInput';
+import CachetaRoundInput, { CACHETA_INPUT_STEPS } from '../components/CachetaRoundInput';
 import CachetaRoundSummary from '../components/CachetaRoundSummary';
 import RoundHistory from '../components/RoundHistory';
+import StepIndicator from '../components/StepIndicator';
 import { CACHETA_PHASES } from '../hooks/useGame';
 import { getRoundDealer, getRoundStarterAfterDealer, rotateToStart } from '../utils/gameRules';
 
+const STEPS = ['Quem joga', 'Quem bateu', 'Placar'];
+
 export default function CachetaGame({ game, actions, theme, onToggleTheme, onViewFinalResult, onNewGame }) {
   const [confirmUndo, setConfirmUndo] = useState(false);
+  const [inputStep, setInputStep] = useState({ round: game.round, step: CACHETA_INPUT_STEPS.PARTICIPATION });
+
+  const currentInputStep = inputStep.round === game.round ? inputStep.step : CACHETA_INPUT_STEPS.PARTICIPATION;
+  const changeInputStep = (step) => setInputStep({ round: game.round, step });
+  const handleFinalize = () => {
+    changeInputStep(CACHETA_INPUT_STEPS.PARTICIPATION);
+    actions.finalizeCachetaRound();
+  };
 
   const lastRound = game.history[game.history.length - 1];
   const dealer = getRoundDealer(game.players, game.round);
@@ -50,6 +61,8 @@ export default function CachetaGame({ game, actions, theme, onToggleTheme, onVie
         </div>
       )}
 
+      <StepIndicator steps={STEPS} current={game.phase === CACHETA_PHASES.SUMMARY ? 2 : currentInputStep} />
+
       {game.phase === CACHETA_PHASES.ROUND && (
         <CachetaRoundInput
           players={orderedPlayers}
@@ -57,9 +70,11 @@ export default function CachetaGame({ game, actions, theme, onToggleTheme, onVie
           winnerId={game.winnerId}
           dealerId={dealer?.id}
           starterId={starter?.id}
+          step={currentInputStep}
+          onChangeStep={changeInputStep}
           onToggleParticipation={actions.updateParticipation}
           onSelectWinner={actions.setWinner}
-          onFinalize={actions.finalizeCachetaRound}
+          onFinalize={handleFinalize}
         />
       )}
 
