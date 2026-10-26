@@ -87,7 +87,7 @@ export default function RoundDeclaration({
               </div>
               <NumberPicker
                 label={`pontos que ${p.name} fará`}
-                max={!hasCards ? undefined : isSingleCard ? activePlayers.length : cards}
+                max={hasCards ? cards : undefined}
                 value={value}
                 forbiddenValue={isLast && hasForbidden ? forbiddenValue : undefined}
                 onChange={(v) => {

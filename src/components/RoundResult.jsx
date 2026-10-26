@@ -84,7 +84,7 @@ export default function RoundResult({
               <span className="picker-caption">ou fez:</span>
               <NumberPicker
                 label={`pontos que ${p.name} fez`}
-                max={isSingleCard ? activePlayers.length : cards || undefined}
+                max={cards || undefined}
                 value={value}
                 onChange={(v) => update(p.id, v)}
               />
