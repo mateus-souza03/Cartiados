@@ -6,6 +6,7 @@ import RoundResult from '../components/RoundResult';
 import RoundSummary from '../components/RoundSummary';
 import RoundHistory from '../components/RoundHistory';
 import StepIndicator from '../components/StepIndicator';
+import SeatOrder from '../components/SeatOrder';
 import { PHASES } from '../hooks/useGame';
 import { getRoundDealer, getRoundStarterAfterDealer, rotateToStart } from '../utils/gameRules';
 
@@ -74,6 +75,10 @@ export default function Game({ game, actions, theme, onToggleTheme, onViewFinalR
           onUpdateCardsPerRound={actions.updateCardsPerRound}
           onConfirm={actions.confirmDeclarations}
         />
+      )}
+
+      {game.phase === PHASES.DECLARATION && (
+        <SeatOrder players={orderedPlayers.filter((p) => p.score > 0)} onReorder={actions.reorderPlayers} />
       )}
 
       {game.phase === PHASES.PLAYING && (

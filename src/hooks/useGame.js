@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { calculateRoundScore, applyScoreChange } from '../utils/scoring';
 import { calculateCachetaRound } from '../utils/cachetaScoring';
 import { TRUCO_TARGET_SCORE } from '../utils/trucoScoring';
-import { isGameOver } from '../utils/gameRules';
+import { isGameOver, reorderForRound } from '../utils/gameRules';
 import { loadGame, saveGame } from '../utils/storage';
 
 export const PHASES = {
@@ -322,6 +322,10 @@ export function useGame() {
 
   // ---------- Comuns ----------
 
+  const reorderPlayers = useCallback((playOrderIds) => {
+    setGame((prev) => ({ ...prev, players: reorderForRound(prev.players, prev.round, playOrderIds) }));
+  }, []);
+
   const undoLastRound = useCallback(() => {
     setGame((prev) => {
       if (!prev.history.length) return prev;
@@ -407,6 +411,7 @@ export function useGame() {
     finalizeCachetaRound,
     nextCachetaRound,
     addTrucoPoints,
+    reorderPlayers,
     undoLastRound,
     resetGame,
   };

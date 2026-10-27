@@ -110,3 +110,28 @@ export function rotateToStart(players, startPlayerId) {
   if (index <= 0) return players;
   return [...players.slice(index), ...players.slice(0, index)];
 }
+
+/**
+ * Aplica uma nova ordem de jogo para a rodada atual. `playOrderIds` lista os
+ * jogadores ativos na sequência em que vão jogar: o primeiro começa e o último
+ * é o pé. Os jogadores são reposicionados para que a rotação por rodada
+ * (getRoundDealer) aponte para esse pé agora e siga a nova sequência depois.
+ * Eliminados vão para o fim da volta, onde já são pulados.
+ */
+export function reorderForRound(players, round, playOrderIds) {
+  const n = players.length;
+  if (!n || !playOrderIds.length) return players;
+
+  const byId = Object.fromEntries(players.map((p) => [p.id, p]));
+  const active = playOrderIds.map((id) => byId[id]).filter(Boolean);
+  const dealer = active[active.length - 1];
+  const others = players.filter((p) => !playOrderIds.includes(p.id));
+  const sequence = [dealer, ...active.slice(0, -1), ...others];
+
+  const startIndex = (round - 1) % n;
+  const next = Array.from({ length: n });
+  sequence.forEach((p, i) => {
+    next[(startIndex + i) % n] = p;
+  });
+  return next;
+}

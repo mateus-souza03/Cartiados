@@ -5,6 +5,7 @@ import CachetaRoundInput, { CACHETA_INPUT_STEPS } from '../components/CachetaRou
 import CachetaRoundSummary from '../components/CachetaRoundSummary';
 import RoundHistory from '../components/RoundHistory';
 import StepIndicator from '../components/StepIndicator';
+import SeatOrder from '../components/SeatOrder';
 import { CACHETA_PHASES } from '../hooks/useGame';
 import { getRoundDealer, getRoundStarterAfterDealer, rotateToStart } from '../utils/gameRules';
 
@@ -76,6 +77,10 @@ export default function CachetaGame({ game, actions, theme, onToggleTheme, onVie
           onSelectWinner={actions.setWinner}
           onFinalize={handleFinalize}
         />
+      )}
+
+      {game.phase === CACHETA_PHASES.ROUND && (
+        <SeatOrder players={orderedPlayers.filter((p) => p.score > 0)} onReorder={actions.reorderPlayers} />
       )}
 
       {game.phase === CACHETA_PHASES.SUMMARY && (
