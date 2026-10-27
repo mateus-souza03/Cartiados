@@ -18,7 +18,9 @@ export default function RoundDeclaration({
   const [error, setError] = useState('');
 
   // A lista já vem na ordem de jogo: o primeiro começa e o último é o pé.
-  const { list: activePlayers, draggingId, handleProps, itemProps } = useDragReorder(
+  // Enquanto arrasta, só a numeração acompanha a posição provisória; o resto
+  // muda ao soltar, para os cards não mudarem de altura no meio do gesto.
+  const { items: activePlayers, positionOf, draggingId, handleProps, itemRef } = useDragReorder(
     players.filter((p) => p.score > 0),
     onReorder,
   );
@@ -77,16 +79,16 @@ export default function RoundDeclaration({
           return (
             <div
               key={p.id}
-              {...itemProps(p.id)}
+              ref={itemRef(p.id)}
               className={`declaration-card ${isNext ? 'declaration-card-next' : ''} ${
                 isFilled(value) ? 'declaration-card-done' : ''
               } ${draggingId === p.id ? 'card-dragging' : ''}`}
             >
               <div className="declaration-head">
-                <span className="declaration-order">{i + 1}º</span>
+                <span className="declaration-order">{positionOf(p.id) + 1}º</span>
                 <span className="declaration-name">{p.name}</span>
                 {isFilled(value) && <span className="declaration-value">{value}</span>}
-                <DragHandle name={p.name} position={i + 1} total={activePlayers.length} {...handleProps(p.id, i)} />
+                <DragHandle name={p.name} position={i + 1} total={activePlayers.length} {...handleProps(p.id)} />
               </div>
               <div className="declaration-badges">
                 {i === 0 && <span className="badge starter-badge">🎯 Começa</span>}

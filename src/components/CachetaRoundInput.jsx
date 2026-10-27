@@ -23,7 +23,8 @@ export default function CachetaRoundInput({
 
   // A lista já vem na ordem de jogo: o primeiro começa e o último é o pé.
   const activePlayers = players.filter((p) => p.score > 0);
-  const { list: seatList, draggingId, handleProps, itemProps } = useDragReorder(activePlayers, onReorder);
+  // Enquanto arrasta, só a numeração acompanha a posição provisória.
+  const { items: seatList, positionOf, draggingId, handleProps, itemRef } = useDragReorder(activePlayers, onReorder);
   const participants = activePlayers.filter((p) => participation[p.id] !== false);
   const sitOuts = activePlayers.length - participants.length;
   const winner = participants.find((p) => p.id === winnerId);
@@ -117,7 +118,7 @@ export default function CachetaRoundInput({
           return (
             <div
               key={p.id}
-              {...itemProps(p.id)}
+              ref={itemRef(p.id)}
               className={`choice-row-wrap ${draggingId === p.id ? 'card-dragging' : ''}`}
             >
               <button
@@ -128,7 +129,7 @@ export default function CachetaRoundInput({
                 className={`choice-row ${playing ? 'choice-row-on' : 'choice-row-off'}`}
                 onClick={() => onToggleParticipation(p.id, !playing)}
               >
-                <span className="declaration-order">{i + 1}º</span>
+                <span className="declaration-order">{positionOf(p.id) + 1}º</span>
                 <span className="choice-main">
                   <span className="choice-name">{p.name}</span>
                   <span className="choice-badges">
@@ -141,7 +142,7 @@ export default function CachetaRoundInput({
                   {playing ? '✋ Joga' : '💤 Passa −1'}
                 </span>
               </button>
-              <DragHandle name={p.name} position={i + 1} total={seatList.length} {...handleProps(p.id, i)} />
+              <DragHandle name={p.name} position={i + 1} total={seatList.length} {...handleProps(p.id)} />
             </div>
           );
         })}
