@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { isForcedToPlay } from '../utils/cachetaScoring';
+import { useDragReorder } from '../hooks/useDragReorder';
+import DragHandle from './DragHandle';
 
 export const CACHETA_INPUT_STEPS = {
   PARTICIPATION: 0,
@@ -10,17 +12,18 @@ export default function CachetaRoundInput({
   players,
   participation,
   winnerId,
-  dealerId,
-  starterId,
   step,
   onChangeStep,
   onToggleParticipation,
   onSelectWinner,
   onFinalize,
+  onReorder,
 }) {
   const [error, setError] = useState('');
 
+  // A lista já vem na ordem de jogo: o primeiro começa e o último é o pé.
   const activePlayers = players.filter((p) => p.score > 0);
+  const { list: seatList, draggingId, handleProps, itemProps } = useDragReorder(activePlayers, onReorder);
   const participants = activePlayers.filter((p) => participation[p.id] !== false);
   const sitOuts = activePlayers.length - participants.length;
   const winner = participants.find((p) => p.id === winnerId);
@@ -101,35 +104,45 @@ export default function CachetaRoundInput({
   return (
     <section className="round-step">
       <h2 className="section-title">Quem vai jogar esta rodada?</h2>
-      <p className="section-subtitle">Todos começam jogando. Toque em quem vai <strong>passar</strong> (perde 1 ponto).</p>
+      <p className="section-subtitle">
+        Todos começam jogando. Toque em quem vai <strong>passar</strong> (perde 1 ponto). Para mudar a ordem da mesa,
+        segure <strong>⠿</strong> e arraste.
+      </p>
 
       <div className="choice-list">
-        {activePlayers.map((p) => {
+        {seatList.map((p, i) => {
           const forced = isForcedToPlay(p);
           const playing = participation[p.id] !== false;
 
           return (
-            <button
+            <div
               key={p.id}
-              type="button"
-              role="switch"
-              aria-checked={playing}
-              disabled={forced}
-              className={`choice-row ${playing ? 'choice-row-on' : 'choice-row-off'}`}
-              onClick={() => onToggleParticipation(p.id, !playing)}
+              {...itemProps(p.id)}
+              className={`choice-row-wrap ${draggingId === p.id ? 'card-dragging' : ''}`}
             >
-              <span className="choice-main">
-                <span className="choice-name">{p.name}</span>
-                <span className="choice-badges">
-                  {p.id === starterId && <span className="badge starter-badge">🎯 Começa</span>}
-                  {p.id === dealerId && <span className="badge badge-muted badge-small">🃏 Pé</span>}
-                  {forced && <span className="badge badge-muted badge-small">🔒 1 ponto: obrigado a jogar</span>}
+              <button
+                type="button"
+                role="switch"
+                aria-checked={playing}
+                disabled={forced}
+                className={`choice-row ${playing ? 'choice-row-on' : 'choice-row-off'}`}
+                onClick={() => onToggleParticipation(p.id, !playing)}
+              >
+                <span className="declaration-order">{i + 1}º</span>
+                <span className="choice-main">
+                  <span className="choice-name">{p.name}</span>
+                  <span className="choice-badges">
+                    {i === 0 && <span className="badge starter-badge">🎯 Começa</span>}
+                    {i === seatList.length - 1 && <span className="badge badge-muted badge-small">🃏 Pé</span>}
+                    {forced && <span className="badge badge-muted badge-small">🔒 1 ponto: obrigado a jogar</span>}
+                  </span>
                 </span>
-              </span>
-              <span className={`choice-pill ${playing ? 'choice-pill-on' : 'choice-pill-off'}`}>
-                {playing ? '✋ Joga' : '💤 Passa −1'}
-              </span>
-            </button>
+                <span className={`choice-pill ${playing ? 'choice-pill-on' : 'choice-pill-off'}`}>
+                  {playing ? '✋ Joga' : '💤 Passa −1'}
+                </span>
+              </button>
+              <DragHandle name={p.name} position={i + 1} total={seatList.length} {...handleProps(p.id, i)} />
+            </div>
           );
         })}
       </div>

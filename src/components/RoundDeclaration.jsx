@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import NumberStepper from './NumberStepper';
 import NumberPicker from './NumberPicker';
+import DragHandle from './DragHandle';
+import { useDragReorder } from '../hooks/useDragReorder';
 
 const isFilled = (v) => v !== '' && v !== null && v !== undefined && Number(v) >= 0;
 
@@ -8,15 +10,18 @@ export default function RoundDeclaration({
   players,
   declarations,
   cardsPerRound,
-  dealerId,
-  starterId,
   onUpdate,
   onUpdateCardsPerRound,
   onConfirm,
+  onReorder,
 }) {
   const [error, setError] = useState('');
 
-  const activePlayers = players.filter((p) => p.score > 0);
+  // A lista já vem na ordem de jogo: o primeiro começa e o último é o pé.
+  const { list: activePlayers, draggingId, handleProps, itemProps } = useDragReorder(
+    players.filter((p) => p.score > 0),
+    onReorder,
+  );
   const lastPlayer = activePlayers[activePlayers.length - 1];
   const otherPlayers = activePlayers.slice(0, -1);
 
@@ -55,7 +60,8 @@ export default function RoundDeclaration({
     <section className="round-step">
       <h2 className="section-title">Quantas cada um vai fazer?</h2>
       <p className="section-subtitle">
-        Na ordem da mesa, toque no número que cada jogador declarar. O destacado é quem declara agora.
+        Na ordem da mesa, toque no número que cada jogador declarar. O destacado é quem declara agora. Para mudar a
+        ordem, segure <strong>⠿</strong> e arraste o card.
       </p>
 
       <div className="round-cards-row">
@@ -71,18 +77,20 @@ export default function RoundDeclaration({
           return (
             <div
               key={p.id}
+              {...itemProps(p.id)}
               className={`declaration-card ${isNext ? 'declaration-card-next' : ''} ${
                 isFilled(value) ? 'declaration-card-done' : ''
-              }`}
+              } ${draggingId === p.id ? 'card-dragging' : ''}`}
             >
               <div className="declaration-head">
                 <span className="declaration-order">{i + 1}º</span>
                 <span className="declaration-name">{p.name}</span>
                 {isFilled(value) && <span className="declaration-value">{value}</span>}
+                <DragHandle name={p.name} position={i + 1} total={activePlayers.length} {...handleProps(p.id, i)} />
               </div>
               <div className="declaration-badges">
-                {p.id === starterId && <span className="badge starter-badge">🎯 Começa</span>}
-                {p.id === dealerId && <span className="badge badge-muted badge-small">🃏 Pé</span>}
+                {i === 0 && <span className="badge starter-badge">🎯 Começa</span>}
+                {isLast && <span className="badge badge-muted badge-small">🃏 Pé</span>}
                 {isNext && <span className="badge badge-small">👉 Vez de declarar</span>}
               </div>
               <NumberPicker
