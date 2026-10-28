@@ -1,15 +1,24 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { END_CONDITIONS, END_CONDITION_LABELS } from '../utils/gameRules';
 import { getGameType } from '../utils/gameTypes';
 import NumberStepper from '../components/NumberStepper';
+
+const MIN_PLAYERS = 2;
+const MAX_PLAYERS = 12;
+
+let rowSeq = 0;
+const makeRowId = () => `row-${(rowSeq += 1)}`;
 
 export default function NewGame({ gameType, onCreate, onCancel }) {
   const gameTypeInfo = getGameType(gameType);
   const isCacheta = gameTypeInfo.id === 'cacheta';
   const isTruco = gameTypeInfo.id === 'truco';
 
-  const [playerCount, setPlayerCount] = useState(2);
-  const [names, setNames] = useState(() => (isTruco ? ['Nós', 'Eles'] : ['', '']));
+  const [players, setPlayers] = useState(() =>
+    (isTruco ? ['Nós', 'Eles'] : ['', '']).map((name) => ({ id: makeRowId(), name })),
+  );
+  const inputRefs = useRef({});
+  const focusOnMount = useRef(null);
   const [initialScore, setInitialScore] = useState(isCacheta ? 7 : 5);
   const [cardsPerRound, setCardsPerRound] = useState(1);
   const [endCondition, setEndCondition] = useState(END_CONDITIONS.LAST_SURVIVOR);
@@ -22,33 +31,61 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
     !isTruco &&
     (endCondition === END_CONDITIONS.MAX_ROUNDS || endCondition === END_CONDITIONS.TARGET_SCORE);
 
-  const handlePlayerCountChange = (value) => {
-    const count = Math.max(2, Math.min(12, Number(value) || 2));
-    setPlayerCount(count);
-    setNames((prev) => {
-      const next = [...prev];
-      while (next.length < count) next.push('');
-      return next.slice(0, count);
-    });
+  const canAdd = !isTruco && players.length < MAX_PLAYERS;
+  const canRemove = !isTruco && players.length > MIN_PLAYERS;
+
+  const handleNameChange = (id, value) => {
+    setPlayers((prev) => prev.map((p) => (p.id === id ? { ...p, name: value } : p)));
+    setError('');
   };
 
-  const handleNameChange = (index, value) => {
-    setNames((prev) => {
-      const next = [...prev];
-      next[index] = value;
-      return next;
-    });
+  const handleAddPlayer = () => {
+    if (!canAdd) return;
+    const id = makeRowId();
+    focusOnMount.current = id;
+    setPlayers((prev) => [...prev, { id, name: '' }]);
+  };
+
+  const handleRemovePlayer = (id) => {
+    if (!canRemove) return;
+    setPlayers((prev) => prev.filter((p) => p.id !== id));
+  };
+
+  // Enter num nome pula para o próximo; no último, cria um novo jogador
+  // (em vez de enviar o formulário pela metade).
+  const handleNameKeyDown = (e, index) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    const next = players[index + 1];
+    if (next) {
+      inputRefs.current[next.id]?.focus();
+    } else if (players[index].name.trim()) {
+      handleAddPlayer();
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (playerCount < 2) {
-      setError('A partida precisa de pelo menos 2 jogadores.');
+    const emptyIndex = players.findIndex((p) => !p.name.trim());
+    if (emptyIndex >= 0) {
+      setError(
+        isTruco
+          ? 'Preencha o nome dos dois times.'
+          : `Preencha o nome do Jogador ${emptyIndex + 1}${canRemove ? ' ou remova-o (✕)' : ''}.`,
+      );
+      inputRefs.current[players[emptyIndex].id]?.focus();
       return;
     }
-    if (names.some((n) => !n.trim())) {
-      setError('Preencha o nome de todos os jogadores.');
+    const seen = new Set();
+    const duplicate = players.find((p) => {
+      const key = p.name.trim().toLowerCase();
+      if (seen.has(key)) return true;
+      seen.add(key);
+      return false;
+    });
+    if (duplicate) {
+      setError(`Tem dois jogadores chamados "${duplicate.name.trim()}". Use nomes diferentes.`);
       return;
     }
     if (initialScore < 0) {
@@ -67,7 +104,7 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
     setError('');
     onCreate({
       gameType: gameTypeInfo.id,
-      players: names.map((n) => n.trim()),
+      players: players.map((p) => p.name.trim()),
       initialScore: isTruco ? 0 : Number(initialScore),
       cardsPerRound: isCacheta || isTruco ? undefined : Number(cardsPerRound),
       allowNegative: isTruco ? false : allowNegative,
@@ -91,41 +128,68 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
           </div>
         )}
 
-        {!isTruco && (
-          <div className="field">
-            <span>Quantidade de jogadores</span>
-            <NumberStepper
-              label="quantidade de jogadores"
-              min={2}
-              max={12}
-              value={playerCount}
-              onChange={handlePlayerCountChange}
-            />
-          </div>
-        )}
-
         <div className="player-name-list">
-          {names.map((name, i) => {
+          {!isTruco && (
+            <div className="player-name-list-header">
+              <span>Jogadores</span>
+              <span className="badge badge-small">{players.length}</span>
+            </div>
+          )}
+
+          {players.map((player, i) => {
             const showRoles = !isTruco;
             const isDealer = showRoles && i === 0;
             const isStarter = showRoles && i === 1;
+            const inputId = `player-name-${player.id}`;
 
             return (
-            <label className="field" key={i}>
-              <span>
-                {isTruco ? `Time ${i + 1}` : `Jogador ${i + 1}`}
-                {isDealer && <span className="badge badge-muted"> 🃏 Dá as cartas / Pé</span>}
-                {isStarter && <span className="badge starter-badge"> 🎯 Começa</span>}
-              </span>
-              <input
-                type="text"
-                value={name}
-                placeholder={isTruco ? `Nome do time ${i + 1}` : `Nome do jogador ${i + 1}`}
-                onChange={(e) => handleNameChange(i, e.target.value)}
-              />
-            </label>
+              <div className="field" key={player.id}>
+                <label htmlFor={inputId}>
+                  {isTruco ? `Time ${i + 1}` : `Jogador ${i + 1}`}
+                  {isDealer && <span className="badge badge-muted"> 🃏 Dá as cartas / Pé</span>}
+                  {isStarter && <span className="badge starter-badge"> 🎯 Começa</span>}
+                </label>
+                <div className="player-name-row">
+                  <input
+                    id={inputId}
+                    ref={(el) => {
+                      inputRefs.current[player.id] = el;
+                      if (el && focusOnMount.current === player.id) {
+                        focusOnMount.current = null;
+                        el.focus();
+                      }
+                    }}
+                    type="text"
+                    value={player.name}
+                    enterKeyHint={i === players.length - 1 && canAdd ? 'enter' : 'next'}
+                    autoCapitalize="words"
+                    placeholder={isTruco ? `Nome do time ${i + 1}` : `Nome do jogador ${i + 1}`}
+                    onChange={(e) => handleNameChange(player.id, e.target.value)}
+                    onKeyDown={(e) => handleNameKeyDown(e, i)}
+                  />
+                  {canRemove && (
+                    <button
+                      type="button"
+                      className="player-remove-btn"
+                      aria-label={`Remover ${player.name.trim() || `jogador ${i + 1}`}`}
+                      onClick={() => handleRemovePlayer(player.id)}
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+              </div>
             );
           })}
+
+          {!isTruco &&
+            (canAdd ? (
+              <button type="button" className="add-player-btn" onClick={handleAddPlayer}>
+                + Jogador
+              </button>
+            ) : (
+              <p className="section-hint">Limite de {MAX_PLAYERS} jogadores.</p>
+            ))}
         </div>
 
         {!isCacheta && !isTruco && (

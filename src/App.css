@@ -1348,3 +1348,58 @@ input[type='number']::-webkit-outer-spin-button {
   width: auto;
   min-width: 0;
 }
+
+/* ---------- New game: player list ---------- */
+.player-name-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.player-name-row {
+  display: flex;
+  gap: 8px;
+}
+
+.player-name-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.player-remove-btn {
+  appearance: none;
+  flex: 0 0 46px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  background: var(--badge-muted-bg);
+  color: var(--text-muted);
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.player-remove-btn:active {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.add-player-btn {
+  appearance: none;
+  width: 100%;
+  min-height: 48px;
+  border: 2px dashed var(--primary);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--primary);
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.add-player-btn:active {
+  background: var(--badge-bg);
+}
