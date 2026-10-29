@@ -19,7 +19,7 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
   );
   const inputRefs = useRef({});
   const focusOnMount = useRef(null);
-  const [initialScore, setInitialScore] = useState(isCacheta ? 7 : 5);
+  const [initialScore, setInitialScore] = useState(isCacheta ? 10 : 5);
   const [cardsPerRound, setCardsPerRound] = useState(1);
   const [endCondition, setEndCondition] = useState(END_CONDITIONS.LAST_SURVIVOR);
   const [endConditionValue, setEndConditionValue] = useState(10);

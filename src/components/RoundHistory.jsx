@@ -55,18 +55,18 @@ export default function RoundHistory({ history, players }) {
                 {round.entries.map((e) => (
                   <div key={e.playerId} className="history-entry">
                     <strong>{e.playerName}</strong>
-                    {e.declared !== undefined ? (
-                      <>
-                        <span>Declarou: {e.declared}</span>
-                        <span>Fez: {e.achieved}</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>{e.playing ? 'Jogou' : 'Não jogou'}</span>
-                        {e.playing && <span>{e.won ? 'Bateu' : 'Não bateu'}</span>}
-                      </>
-                    )}
-                    <span>Resultado: {e.scoreChange === 0 ? '0' : e.scoreChange}</span>
+                    <span>
+                      {e.declared !== undefined
+                        ? `Declarou ${e.declared} · Fez ${e.achieved}`
+                        : e.playing
+                          ? e.won
+                            ? '🏆 Bateu'
+                            : 'Jogou, não bateu'
+                          : 'Não jogou'}
+                    </span>
+                    <span className={`history-entry-result ${e.scoreChange === 0 ? 'row-success' : 'row-fail'}`}>
+                      {e.scoreChange === 0 ? '0' : e.scoreChange}
+                    </span>
                   </div>
                 ))}
               </div>
