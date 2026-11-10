@@ -7,6 +7,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      // O registro é feito em src/registerServiceWorker.js (checa atualização
+      // ao abrir/voltar para o app e recarrega quando há versão nova).
+      injectRegister: false,
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
         name: 'Cartiado',
@@ -27,6 +30,9 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        // A versão nova assume na hora, sem esperar o app ser fechado.
+        skipWaiting: true,
+        clientsClaim: true,
       },
     }),
   ],
