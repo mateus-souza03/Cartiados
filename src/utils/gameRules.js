@@ -101,6 +101,43 @@ export function getRoundPe(players, round) {
   return getRoundDealer(players, round);
 }
 
+// ---------- Cartas por rodada (F#dinha) ----------
+
+export const FODINHA_DECK_SIZE = 40;
+const MIN_CARDS_ON_DESCENT = 2;
+
+/**
+ * Máximo de cartas por jogador: o maior n em que ainda sobra pelo menos uma
+ * carta no monte (40 − n × jogadores ≥ 1).
+ */
+export function getMaxCardsPerPlayer(activeCount) {
+  const count = Math.max(1, activeCount);
+  return Math.max(MIN_CARDS_ON_DESCENT, Math.floor((FODINHA_DECK_SIZE - 1) / count));
+}
+
+/**
+ * Próxima quantidade de cartas: começa em 1, sobe de um em um até o máximo,
+ * desce até 2 e volta a subir. O 1 só existe na primeira rodada; o topo e o
+ * fundo aparecem uma vez cada (… 7, 8, 7 … 3, 2, 3 …). O máximo é recalculado
+ * com os jogadores ainda na partida.
+ */
+export function getNextCardsPerRound(currentCards, direction, activeCount) {
+  const max = getMaxCardsPerPlayer(activeCount);
+  const current = Math.max(1, Number(currentCards) || 1);
+  let next = direction === 'down' ? current - 1 : current + 1;
+  let nextDirection = direction === 'down' ? 'down' : 'up';
+
+  if (next >= max) {
+    next = max;
+    nextDirection = 'down';
+  } else if (nextDirection === 'down' && next <= MIN_CARDS_ON_DESCENT) {
+    next = MIN_CARDS_ON_DESCENT;
+    nextDirection = 'up';
+  }
+
+  return { cardsPerRound: next, cardsDirection: nextDirection };
+}
+
 /**
  * Reordena a lista para começar pelo jogador informado, mantendo a ordem
  * de mesa a partir dali (dá a volta para os que vêm antes dele).

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { calculateRoundScore, applyScoreChange } from '../utils/scoring';
 import { calculateCachetaRound } from '../utils/cachetaScoring';
 import { TRUCO_TARGET_SCORE } from '../utils/trucoScoring';
-import { isGameOver, reorderForRound } from '../utils/gameRules';
+import { getNextCardsPerRound, isGameOver, reorderForRound } from '../utils/gameRules';
 import { loadGame, saveGame } from '../utils/storage';
 
 export const PHASES = {
@@ -91,7 +91,8 @@ export function useGame() {
 
     setGame({
       ...base,
-      cardsPerRound: config.cardsPerRound,
+      cardsPerRound: 1,
+      cardsDirection: 'up',
       phase: PHASES.DECLARATION,
       declarations: createInitialDrafts(players),
       results: {},
@@ -175,6 +176,7 @@ export function useGame() {
       const historyEntry = {
         round: prev.round,
         cardsPerRound: prev.cardsPerRound,
+        cardsDirection: prev.cardsDirection,
         entries,
         scoresBefore,
         scoresAfter,
@@ -196,8 +198,11 @@ export function useGame() {
   const nextRound = useCallback(() => {
     setGame((prev) => {
       if (prev.finished) return prev;
+      const activeCount = prev.players.filter((p) => p.score > 0).length;
+      const next = getNextCardsPerRound(prev.cardsPerRound, prev.cardsDirection, activeCount);
       return {
         ...prev,
+        ...next,
         round: prev.round + 1,
         phase: PHASES.DECLARATION,
         declarations: createInitialDrafts(prev.players),
@@ -383,6 +388,7 @@ export function useGame() {
         history: prev.history.slice(0, -1),
         round: lastEntry.round,
         cardsPerRound: lastEntry.cardsPerRound,
+        cardsDirection: lastEntry.cardsDirection ?? 'up',
         phase: PHASES.DECLARATION,
         declarations,
         results: {},

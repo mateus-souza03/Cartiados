@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { END_CONDITIONS, END_CONDITION_LABELS } from '../utils/gameRules';
+import { END_CONDITIONS, END_CONDITION_LABELS, getMaxCardsPerPlayer } from '../utils/gameRules';
 import { getGameType } from '../utils/gameTypes';
 import NumberStepper from '../components/NumberStepper';
 
@@ -20,7 +20,6 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
   const inputRefs = useRef({});
   const focusOnMount = useRef(null);
   const [initialScore, setInitialScore] = useState(isCacheta ? 10 : 5);
-  const [cardsPerRound, setCardsPerRound] = useState(1);
   const [endCondition, setEndCondition] = useState(END_CONDITIONS.LAST_SURVIVOR);
   const [endConditionValue, setEndConditionValue] = useState(10);
   const [allowNegative, setAllowNegative] = useState(false);
@@ -92,10 +91,6 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
       setError('A pontuação inicial não pode ser negativa.');
       return;
     }
-    if (!isCacheta && !isTruco && cardsPerRound < 1) {
-      setError('A quantidade de cartas deve ser pelo menos 1.');
-      return;
-    }
     if (needsEndConditionValue && (!endConditionValue || endConditionValue < 1)) {
       setError('Informe um valor válido para a condição de encerramento.');
       return;
@@ -106,7 +101,6 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
       gameType: gameTypeInfo.id,
       players: players.map((p) => p.name.trim()),
       initialScore: isTruco ? 0 : Number(initialScore),
-      cardsPerRound: isCacheta || isTruco ? undefined : Number(cardsPerRound),
       allowNegative: isTruco ? false : allowNegative,
       endCondition: isTruco ? 'manual' : isCacheta ? END_CONDITIONS.LAST_SURVIVOR : endCondition,
       endConditionValue: isTruco ? 0 : Number(endConditionValue),
@@ -193,10 +187,11 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
         </div>
 
         {!isCacheta && !isTruco && (
-          <div className="field">
-            <span>Quantidade de cartas por rodada</span>
-            <NumberStepper label="quantidade de cartas por rodada" min={1} value={cardsPerRound} onChange={setCardsPerRound} />
-          </div>
+          <p className="section-hint">
+            As cartas por rodada são automáticas: começa com 1, sobe até{' '}
+            <strong>{getMaxCardsPerPlayer(players.length)}</strong> com {players.length} jogadores (sobrando ao menos 1
+            das 40 cartas), desce até 2 e volta a subir. O limite aumenta quando alguém é eliminado.
+          </p>
         )}
 
         {isCacheta ? (

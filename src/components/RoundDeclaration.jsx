@@ -3,6 +3,7 @@ import NumberStepper from './NumberStepper';
 import NumberPicker from './NumberPicker';
 import DragHandle from './DragHandle';
 import { useDragReorder } from '../hooks/useDragReorder';
+import { getMaxCardsPerPlayer } from '../utils/gameRules';
 
 const isFilled = (v) => v !== '' && v !== null && v !== undefined && Number(v) >= 0;
 
@@ -68,7 +69,13 @@ export default function RoundDeclaration({
 
       <div className="round-cards-row">
         <span className="round-cards-label">Cartas nesta rodada</span>
-        <NumberStepper label="cartas nesta rodada" min={1} value={cardsPerRound} onChange={onUpdateCardsPerRound} />
+        <NumberStepper
+          label="cartas nesta rodada"
+          min={1}
+          max={getMaxCardsPerPlayer(activePlayers.length)}
+          value={cardsPerRound}
+          onChange={onUpdateCardsPerRound}
+        />
       </div>
 
       <div className="declaration-list">
