@@ -104,10 +104,9 @@ export default function CachetaRoundInput({
 
   return (
     <section className="round-step">
-      <h2 className="section-title">Quem vai jogar esta rodada?</h2>
+      <h2 className="section-title">Toque em quem passa</h2>
       <p className="section-subtitle">
-        Todos começam jogando. Toque em quem vai <strong>passar</strong> (perde 1 ponto). Para mudar a ordem da mesa,
-        segure <strong>⠿</strong> e arraste.
+        Todos começam jogando.
       </p>
 
       <div className="choice-list">
