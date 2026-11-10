@@ -1,6 +1,6 @@
 import { TRUCO_POINT_OPTIONS } from '../utils/trucoScoring';
 
-export default function TrucoScoreBoard({ players, onAddPoints }) {
+export default function TrucoScoreBoard({ players, onAddPoints, onlyOnePoint = false }) {
   return (
     <section className="truco-board">
       {players.map((team) => (
@@ -15,6 +15,7 @@ export default function TrucoScoreBoard({ players, onAddPoints }) {
                 key={points}
                 type="button"
                 className="truco-point-btn"
+                disabled={onlyOnePoint && points !== 1}
                 onClick={() => onAddPoints(team.id, points)}
               >
                 {points}

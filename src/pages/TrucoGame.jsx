@@ -46,14 +46,14 @@ export default function TrucoGame({ game, actions, theme, onToggleTheme, onNewGa
       {maoDeOnzeTeam && (
         <div className="truco-mao-onze-banner">
           <strong>Mão de 11!</strong>
-          <p>
-            {maoDeOnzeTeam.name} está com 11 pontos. Essa mão vale a partida inteira: nenhum time pode fugir
-            e quem fizer o próximo ponto vence o jogo.
-          </p>
         </div>
       )}
 
-      <TrucoScoreBoard players={game.players} onAddPoints={actions.addTrucoPoints} />
+      <TrucoScoreBoard
+        players={game.players}
+        onAddPoints={actions.addTrucoPoints}
+        onlyOnePoint={Boolean(maoDeOnzeTeam)}
+      />
 
       <TrucoHistory history={game.history} />
     </div>
