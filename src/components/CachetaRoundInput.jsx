@@ -54,7 +54,9 @@ export default function CachetaRoundInput({
         <p className="section-subtitle">Toque no jogador que bateu. Quem bateu não perde nada; os outros que jogaram perdem 2.</p>
 
         <div className="choice-list" role="radiogroup" aria-label="Quem bateu">
-          {participants.map((p) => {
+          {[...participants]
+            .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' }))
+            .map((p) => {
             const selected = p.id === winnerId;
             return (
               <button
