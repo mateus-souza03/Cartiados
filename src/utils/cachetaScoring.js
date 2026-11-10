@@ -9,7 +9,14 @@ export function isForcedToPlay(player) {
   return player.score === 1;
 }
 
-export function calculateCachetaRound(activePlayers, participation, winnerId) {
+/** Se só um jogador joga a rodada, ele ganha automaticamente. */
+export function getAutomaticWinner(activePlayers, participation) {
+  const participants = activePlayers.filter((p) => participation[p.id] !== false);
+  return participants.length === 1 ? participants[0] : null;
+}
+
+export function calculateCachetaRound(activePlayers, participation, selectedWinnerId) {
+  const winnerId = getAutomaticWinner(activePlayers, participation)?.id ?? selectedWinnerId;
   return activePlayers.map((player) => {
     const playing = participation[player.id] !== false;
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { isForcedToPlay } from '../utils/cachetaScoring';
+import { getAutomaticWinner, isForcedToPlay } from '../utils/cachetaScoring';
 import { useDragReorder } from '../hooks/useDragReorder';
 import DragHandle from './DragHandle';
 
@@ -30,10 +30,11 @@ export default function CachetaRoundInput({
   const participants = activePlayers.filter((p) => participation[p.id] !== false);
   const sitOuts = activePlayers.length - participants.length;
   const winner = participants.find((p) => p.id === winnerId);
+  const autoWinner = getAutomaticWinner(activePlayers, participation);
 
   const handleContinue = () => {
     setError('');
-    if (participants.length === 0) {
+    if (participants.length <= 1) {
       onFinalize();
       return;
     }
@@ -162,10 +163,20 @@ export default function CachetaRoundInput({
         {sitOuts > 0 && ` · ${sitOuts} ${sitOuts === 1 ? 'passa' : 'passam'}`}
       </p>
 
+      {autoWinner && (
+        <p className="section-hint">
+          🏆 Só {autoWinner.name} joga: ganha a rodada automaticamente e {sitOuts === 1 ? 'o outro perde' : 'os outros perdem'} 1 ponto.
+        </p>
+      )}
+
       {error && <p className="form-error">{error}</p>}
 
       <button type="button" className="btn btn-primary btn-block" onClick={handleContinue}>
-        {participants.length === 0 ? 'Ninguém joga: finalizar rodada' : 'Continuar: quem bateu? ▶'}
+        {participants.length === 0
+          ? 'Ninguém joga: finalizar rodada'
+          : autoWinner
+            ? `Finalizar: ${autoWinner.name} ganha`
+            : 'Continuar: quem bateu? ▶'}
       </button>
     </section>
   );
