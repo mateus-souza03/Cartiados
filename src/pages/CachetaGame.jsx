@@ -88,7 +88,7 @@ export default function CachetaGame({ game, actions, theme, onToggleTheme, onVie
       )}
 
       <ScoreBoard players={game.players} />
-      <RoundHistory history={game.history} players={game.players} />
+      <RoundHistory history={game.history} />
     </div>
   );
 }

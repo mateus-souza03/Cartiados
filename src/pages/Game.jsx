@@ -129,7 +129,7 @@ export default function Game({ game, actions, theme, onToggleTheme, onViewFinalR
       )}
 
       <ScoreBoard players={game.players} />
-      <RoundHistory history={game.history} players={game.players} />
+      <RoundHistory history={game.history} />
     </div>
   );
 }

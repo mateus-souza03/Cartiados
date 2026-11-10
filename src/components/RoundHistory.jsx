@@ -1,6 +1,13 @@
 import { useState } from 'react';
 
-export default function RoundHistory({ history, players }) {
+// Eliminado na rodada em que a pontuação passa de positiva para zero (ou menos).
+function wasEliminated(round, entry) {
+  const before = round.scoresBefore?.[entry.playerId];
+  if (before === undefined) return false;
+  return before > 0 && before + entry.scoreChange <= 0;
+}
+
+export default function RoundHistory({ history }) {
   const [open, setOpen] = useState(false);
 
   if (!history.length) return null;
@@ -12,37 +19,6 @@ export default function RoundHistory({ history, players }) {
       </button>
 
       {open && (
-        <>
-          <div className="table-wrapper">
-            <table className="results-table">
-              <thead>
-                <tr>
-                  <th>Rodada</th>
-                  {players.map((p) => (
-                    <th key={p.id}>{p.name}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {history.map((round) => (
-                  <tr key={round.round}>
-                    <td>{round.round}</td>
-                    {players.map((p) => {
-                      const entry = round.entries.find((e) => e.playerId === p.id);
-                      if (!entry) return <td key={p.id}>-</td>;
-                      const success = entry.scoreChange === 0;
-                      return (
-                        <td key={p.id} className={success ? 'row-success' : 'row-fail'}>
-                          {success ? '0' : entry.scoreChange}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
           <div className="history-detail-list">
             {history.map((round) => (
               <div key={round.round} className="history-round">
@@ -63,6 +39,7 @@ export default function RoundHistory({ history, players }) {
                             ? '🏆 Bateu'
                             : 'Jogou, não bateu'
                           : 'Não jogou'}
+                      {wasEliminated(round, e) && <span className="eliminated-badge">💀 Eliminado</span>}
                     </span>
                     <span className={`history-entry-result ${e.scoreChange === 0 ? 'row-success' : 'row-fail'}`}>
                       {e.scoreChange === 0 ? '0' : e.scoreChange}
@@ -72,7 +49,6 @@ export default function RoundHistory({ history, players }) {
               </div>
             ))}
           </div>
-        </>
       )}
     </section>
   );

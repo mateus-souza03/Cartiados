@@ -5,7 +5,7 @@ export default function GameOver({ game, onNewGame }) {
   return (
     <div className="game-over-page">
       <GameSummary game={game} onNewGame={onNewGame} />
-      <RoundHistory history={game.history} players={game.players} />
+      <RoundHistory history={game.history} />
     </div>
   );
 }
