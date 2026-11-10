@@ -5,8 +5,20 @@
 .game-over-page {
   max-width: 560px;
   margin: 0 auto;
-  padding: 20px 16px 48px;
+  padding: calc(20px + env(safe-area-inset-top)) 16px calc(48px + env(safe-area-inset-bottom));
   min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* App instalado: a barra de status já ocupa a área segura, então o respiro
+   extra no topo pode ser menor. */
+@media (display-mode: standalone) {
+  .home,
+  .new-game,
+  .game-page,
+  .game-over-page {
+    padding-top: calc(8px + env(safe-area-inset-top));
+  }
 }
 
 @media (min-width: 900px) {
@@ -108,7 +120,7 @@
   justify-content: center;
   text-align: center;
   gap: 8px;
-  padding-top: 10vh;
+  padding-bottom: 6vh;
 }
 
 .home-emblem {
