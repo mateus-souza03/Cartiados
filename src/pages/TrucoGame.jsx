@@ -55,7 +55,7 @@ export default function TrucoGame({ game, actions, theme, onToggleTheme, onNewGa
         onlyOnePoint={Boolean(maoDeOnzeTeam)}
       />
 
-      <TrucoHistory history={game.history} />
+      <TrucoHistory history={game.history} players={game.players} />
     </div>
   );
 }
