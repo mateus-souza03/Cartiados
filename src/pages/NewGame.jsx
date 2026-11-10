@@ -2,8 +2,6 @@ import { useRef, useState } from 'react';
 import { END_CONDITIONS, END_CONDITION_LABELS, getMaxCardsPerPlayer } from '../utils/gameRules';
 import { getGameType } from '../utils/gameTypes';
 import NumberStepper from '../components/NumberStepper';
-import InstallButton from '../components/InstallButton';
-
 const MIN_PLAYERS = 2;
 const MAX_PLAYERS = 12;
 
@@ -254,10 +252,6 @@ export default function NewGame({ gameType, onCreate, onCancel }) {
           Voltar
         </button>
       </form>
-
-      <div className="install-slot">
-        <InstallButton />
-      </div>
     </div>
   );
 }
