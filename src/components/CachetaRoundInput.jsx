@@ -141,10 +141,10 @@ export default function CachetaRoundInput({
                 <span className="choice-main">
                   <span className="choice-name">{p.name}</span>
                   <span className="choice-badges">
-                    <span className="badge badge-muted badge-small">{formatPoints(p.score)}</span>
                     {i === 0 && <span className="badge starter-badge">🎯 Começa</span>}
                     {i === seatList.length - 1 && <span className="badge badge-muted badge-small">🃏 Pé</span>}
                     {forced && <span className="badge badge-muted badge-small">🔒 1 ponto: obrigado a jogar</span>}
+                    <span className="badge badge-muted badge-small">{formatPoints(p.score)}</span>
                   </span>
                 </span>
                 <span className={`choice-pill ${playing ? 'choice-pill-on' : 'choice-pill-off'}`}>
