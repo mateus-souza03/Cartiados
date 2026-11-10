@@ -1,4 +1,5 @@
 import ThemeToggle from '../components/ThemeToggle';
+import InstallButton from '../components/InstallButton';
 
 export default function Home({ theme, onToggleTheme, onNewGame, onContinue, hasSavedGame }) {
   return (
@@ -20,6 +21,7 @@ export default function Home({ theme, onToggleTheme, onNewGame, onContinue, hasS
           <button type="button" className="btn btn-secondary btn-block" onClick={onNewGame}>
             Nova partida
           </button>
+          <InstallButton />
         </div>
       </div>
     </div>
