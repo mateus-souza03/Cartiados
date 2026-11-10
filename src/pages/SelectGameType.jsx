@@ -1,4 +1,5 @@
 import { GAME_TYPES } from '../utils/gameTypes';
+import InstallButton from '../components/InstallButton';
 
 export default function SelectGameType({ onSelect, onBack }) {
   return (
@@ -26,6 +27,10 @@ export default function SelectGameType({ onSelect, onBack }) {
       <button type="button" className="btn btn-ghost btn-block" onClick={onBack}>
         Voltar
       </button>
+
+      <div className="install-slot">
+        <InstallButton />
+      </div>
     </div>
   );
 }

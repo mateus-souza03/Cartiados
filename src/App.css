@@ -947,6 +947,14 @@ input[type='number']::-webkit-outer-spin-button {
 }
 
 /* ---------- Install ---------- */
+.install-slot {
+  margin-top: 16px;
+}
+
+.install-slot:empty {
+  display: none;
+}
+
 .btn-install {
   background: transparent;
   color: var(--primary);
