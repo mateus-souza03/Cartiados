@@ -1,23 +1,17 @@
-import { getRankedPlayers, getWinner } from '../utils/gameRules';
+import { getWinner } from '../utils/gameRules';
+import Fireworks from './Fireworks';
 
 export default function GameSummary({ game, onNewGame }) {
   const winner = getWinner(game);
-  const ranked = getRankedPlayers(game.players);
 
   return (
     <div className="game-over">
-      <div className="trophy">🏆</div>
+      <Fireworks />
       <h1>Fim de jogo</h1>
-      <p className="winner-line">{winner?.name} venceu!</p>
-
-      <div className="final-scores">
-        <h2 className="section-title">Pontuação final</h2>
-        {ranked.map((p, i) => (
-          <div key={p.id} className={`summary-score-row ${i === 0 ? 'scoreboard-leader' : ''}`}>
-            <span>{p.name}</span>
-            <strong>{p.score}</strong>
-          </div>
-        ))}
+      <div className="winner-spotlight">
+        <div className="trophy">🏆</div>
+        <p className="winner-label">Vencedor</p>
+        <p className="winner-name">{winner?.name}</p>
       </div>
 
       <button type="button" className="btn btn-primary btn-block" onClick={onNewGame}>
